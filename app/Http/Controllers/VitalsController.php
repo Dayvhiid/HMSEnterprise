@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Vital;
 use App\Models\vital2;
 
-class vitalsController extends Controller
+class VitalsController extends Controller
 {
     //
     public function store(Request $request)

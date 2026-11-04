@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lens;
 use Illuminate\Http\Request;
 
-class lensController extends Controller
+class LensController extends Controller
 {
     public function index(){
         return view('lens.lens');
