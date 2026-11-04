@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Frame;
 use Illuminate\Http\Request;
 
-class frameController extends Controller
+class FrameController extends Controller
 {
     public function index(){
         return view('frame.frame');

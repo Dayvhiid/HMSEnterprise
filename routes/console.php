@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\twilioSmsController;
+use App\Http\Controllers\TwilioSmsController;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -10,9 +10,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::call(function () {
-    (new twilioSmsController)->test();
+    (new TwilioSmsController)->test();
 })->everyMinute();
 
 Schedule::call(function () {
-    (new twilioSmsController)->playing();
+    (new TwilioSmsController)->playing();
 })->everyFifteenSeconds();

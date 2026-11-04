@@ -5,7 +5,7 @@ use App\Models\PatientInfo;
 use Illuminate\Http\Request;
 use Twilio\Rest\Client;
 use Exception;
-class twilioSmsController extends Controller
+class TwilioSmsController extends Controller
 {
     public function index(){
         $user = PatientInfo::latest()->first();

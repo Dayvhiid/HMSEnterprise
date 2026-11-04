@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 
-class messagingController extends Controller
+class MessagingController extends Controller
 {
     public function index(){
         return view('appointment.bookappointment');
