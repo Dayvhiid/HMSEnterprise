@@ -38,6 +38,8 @@
                         href=" {{ route('optician.find') }}">Optician Record Search</a>
                     <a class="text-sm font-medium text-slate-700 hover:text-[#1993e5] transition-colors duration-200"
                         href=" {{ route('search.treatment') }}">Treatment Record</a>
+                    <a class="text-sm font-medium text-slate-700 hover:text-[#1993e5] transition-colors duration-200"
+                        href="{{ route('admin2.lens') }}">Lens</a>
                 </nav>
             </header>
             <main class="flex-1 bg-slate-50 px-10 py-8">
