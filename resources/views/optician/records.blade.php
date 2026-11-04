@@ -53,95 +53,95 @@
             ></div>
           </div>
         </header>
-        <div class="px-40 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <div class="px-6 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col w-full flex-1">
             <div class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#121416] tracking-light text-[32px] font-bold leading-tight min-w-72">Patient Details</p></div>
             <div class="px-4 py-3 @container">
-              <div class="flex overflow-hidden rounded-xl border border-[#dde1e3] bg-white">
+              <div class="flex overflow-x-auto rounded-xl border border-[#dde1e3] bg-white">
                 <table class="flex-1" id="patientTable">
                   <thead>
                     <tr class="bg-white">
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">Date</th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120 px-4 py-3 text-left text-[#121416] w-[170px] text-sm font-medium leading-normal">Date</th>
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240 px-4 py-3 text-left text-[#121416] w-[340px] text-sm font-medium leading-normal">
                         Patient Name
                       </th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">Power</th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360 px-4 py-3 text-left text-[#121416] w-[180px] text-sm font-medium leading-normal">Power</th>
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480 px-4 py-3 text-left text-[#121416] w-[260px] text-sm font-medium leading-normal">
                         Posted From
                       </th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600 px-4 py-3 text-left text-[#121416] w-[200px] text-sm font-medium leading-normal">
                         Card Number
                       </th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720 px-4 py-3 text-left text-[#121416] w-[260px] text-sm font-medium leading-normal">
                         Frame Type
                       </th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 px-4 py-3 text-left text-[#121416] w-[120px] text-sm font-medium leading-normal">
                         Quantity
                       </th>
-                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 px-4 py-3 text-left text-[#121416] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 px-4 py-3 text-left text-[#121416] w-[100px] text-sm font-medium leading-normal">
                         Action
                       </th>
                     </tr>
                   </thead>
                   <tbody id="tableBody">
                     <tr class="border-t border-t-[#dde1e3]">
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                         <input
                             type="date"
                             name="patients[0][date]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                                <input
                                     type="text"
                                      name="patients[0][patient_name]"
-                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                                     value=""
                                     />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                             <input
                             type="text"
                             name="patients[0][power]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                             <input
                             type="text"
                             name="patients[0][posted_from]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                              <input
                             type="text"
                             name="patients[0][card_number]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">  
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">  
                         <input
                             type="text"
                             name="patients[0][frame_type]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                          <input
                             type="text"
                             name="patients[0][qty]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+                      <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
                         <button type="button" onclick="addNewRow()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                           Add
                         </button>
@@ -160,15 +160,6 @@
               </button>
             </div>
                </form>  
-              <style>
-                          @container(max-width:120px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120{display: none;}}
-                @container(max-width:240px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240{display: none;}}
-                @container(max-width:360px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360{display: none;}}
-                @container(max-width:480px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480{display: none;}}
-                @container(max-width:600px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600{display: none;}}
-                @container(max-width:720px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720{display: none;}}
-                @container(max-width:840px){.table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840{display: none;}}
-              </style>
             </div>
           </div>
         </div>
@@ -188,64 +179,64 @@
         
         // Add cells to the row with the same structure as the existing row
         newRow.innerHTML = `
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-120 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
             <input
               type="date"
               name="patients[${rowCount}][date]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-240 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
             <input
               type="text"
               name="patients[${rowCount}][patient_name]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-360 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
             <input
               type="text"
               name="patients[${rowCount}][power]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-480 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
             <input
               type="text"
               name="patients[${rowCount}][posted_from]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-600 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
             <input
               type="text"
               name="patients[${rowCount}][card_number]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">  
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-720 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">  
             <input
               type="text"
               name="patients[${rowCount}][frame_type]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
             <input
               type="text"
               name="patients[${rowCount}][qty]"
-              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] p-[15px] text-base font-normal leading-normal"
+              class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-14 placeholder:text-[#60758a] px-3 text-base font-normal leading-normal"
               value=""
             />
           </td>
-          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 w-[400px] text-[#6a7681] text-sm font-normal leading-normal">
-            <button onclick="addNewRow()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <td class="table-bd426a45-3b65-4bc2-a180-0d5449f4261c-column-840 h-[72px] px-4 py-2 text-[#6a7681] text-sm font-normal leading-normal">
+            <button type="button" onclick="addNewRow()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
               Add
             </button>
           </td>

@@ -85,53 +85,89 @@
               </label>
             </div>
        
-            <?php
-                $totalResults = count($combinedResults);
-                $halfResults = floor($totalResults / 2);
-                $halfCombinedResults = array_slice($combinedResults, 0, $halfResults);
-                ?>
-            @foreach ($halfCombinedResults as $combinedResult)
+            @if (session('success'))
+              <div class="mx-4 mt-2 rounded-lg bg-green-100 p-3 text-sm text-green-800">{{ session('success') }}</div>
+            @endif
+            @if (session('info'))
+              <div class="mx-4 mt-2 rounded-lg bg-amber-100 p-3 text-sm text-amber-900">{{ session('info') }}</div>
+            @endif
+            @if ($errors->any())
+              <div class="mx-4 mt-2 rounded-lg bg-red-100 p-3 text-sm text-red-800">
+                <p class="font-bold">The changes were not saved:</p>
+                <ul class="list-disc pl-5">
+                  @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>
+              </div>
+            @endif
+            @if ($visits->isNotEmpty())
+              <p class="px-4 pt-2 text-[#4e7a97] text-sm">Change any value in a visit and click <strong>Save changes to this visit</strong>. Each visit saves separately.</p>
+            @endif
+            <p class="px-4 pt-3 text-[#4e7a97] text-sm">
+              Patient {{ $patientCode }}: {{ $visits->count() }} {{ \Illuminate\Support\Str::plural('visit', $visits->count()) }}, newest first
+            </p>
+            @forelse ($visits as $visit)
+              @php
+                $combinedResult = $visit['vital'];
+                $leftEye = $visit['vital2']; // left-eye subjective refraction and final RX for this visit
+              @endphp
+            <form method="POST" action="{{ route('vitals.update', $combinedResult) }}" class="vitals-card-form mx-4 my-6 rounded-xl border-2 border-[#d0dee7] bg-white pb-4">
+              @csrf
+              @method('PUT')
+              <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-xl border-b border-[#d0dee7] bg-[#e7eef3] px-4 py-3">
+                <div>
+                  <p class="text-[#0e161b] text-lg font-bold leading-tight">Visit: {{ $combinedResult->created_at->format('F j, Y g:i A') }}</p>
+                  @if ($combinedResult->updated_at && $combinedResult->updated_at->gt($combinedResult->created_at))
+                    <p class="text-[#4e7a97] text-xs pt-1">Edited on {{ $combinedResult->updated_at->format('F j, Y g:i A') }}</p>
+                  @endif
+                </div>
+                <div class="flex items-center gap-3">
+                  <a href="{{ route('vitals.edit', $combinedResult) }}" class="text-sm text-[#1993e5] underline">Open in full form</a>
+                  <button type="submit" class="vitals-card-save flex items-center justify-center rounded-lg h-10 px-4 bg-[#1993e5] text-slate-50 text-sm font-bold"><span>Save changes to this visit</span></button>
+                </div>
+              </div>
                 
          
             <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Case History</h2>
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
-                <textarea
+                <textarea name="cc"
                   placeholder="Chief Complaint (C/C)"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
-                >  {{ $combinedResult->cc }} </textarea>
+                >{{ $combinedResult->cc }}</textarea>
               </label>
             </div>
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
-                <textarea
+                <textarea name="pohx"
                   placeholder="Present Ocular History (PoHx)"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
-                >  {{ $combinedResult->pohx }} </textarea>
+                >{{ $combinedResult->pohx }}</textarea>
               </label>
             </div>
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
-                <textarea
+                <textarea name="lee"
                   placeholder="Past Ocular History (PfoHx)"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
-                >  {{ $combinedResult->lee }} </textarea>
+                >{{ $combinedResult->lee }}</textarea>
               </label>
             </div>
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
-                <textarea
+                <textarea name="pmhx"
                   placeholder="Lifestyle and Exposure Events (LEE)"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
-                > {{ $combinedResult->pmhx }} </textarea>
+                >{{ $combinedResult->pmhx }}</textarea>
               </label>
             </div>
             <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
-                <textarea
+                <textarea name="pfohx"
                   placeholder="Past Medical History (PmHx)"
                   class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e161b] focus:outline-0 focus:ring-0 border border-[#d0dee7] bg-slate-50 focus:border-[#d0dee7] min-h-36 placeholder:text-[#4e7a97] p-[15px] text-base font-normal leading-normal"
-                > {{ $combinedResult->pfohx }} </textarea>
+                >{{ $combinedResult->pfohx }}</textarea>
               </label>
             </div>
             <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Visual Examination</h2>
@@ -155,15 +191,15 @@
                       <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->odunaided }}</td>
-                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->odpinhole }} </td>
-                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->odaxis }} </td>
+                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODunaided" value="{{ $combinedResult->odunaided }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODpinhole" value="{{ $combinedResult->odpinhole }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODnearVA" value="{{ $combinedResult->odaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{  $combinedResult->osunaided }} </td>
-                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->ospinhole }} </td>
-                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{$combinedResult->osaxis}} </td>
+                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSunaided" value="{{ $combinedResult->osunaided }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSpinhole" value="{{ $combinedResult->ospinhole }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ed93db9d-8d40-4a89-8594-a3c6ef716f33-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSnearVA" value="{{ $combinedResult->osaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -204,19 +240,26 @@
                       <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->lodsph }}</td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->lodcyl }}</td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->lodaxis }}</td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->lodva }} </td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODSPH" value="{{ $combinedResult->lodsph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODCYL" value="{{ $combinedResult->lodcyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODAXIS" value="{{ $combinedResult->lodaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ODVA" value="{{ $combinedResult->lodva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                      
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->lossph }}</td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->loscyl }} </td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->losaxis }} </td>
-                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->losva }} </td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSSPH" value="{{ $combinedResult->lossph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSCYL" value="{{ $combinedResult->loscyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSAXIS" value="{{ $combinedResult->losaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="OSVA" value="{{ $combinedResult->losva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                    
+                    </tr>
+                    <tr class="border-t border-t-[#d0dee7]">
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">ADD</td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ADDSPH" value="{{ $combinedResult->addsph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ADDCYL" value="{{ $combinedResult->addcyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ADDAXIS" value="{{ $combinedResult->addaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-0ff4604b-733a-4828-be83-9f4a384d75a3-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="ADDVA" value="{{ $combinedResult->addva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -251,15 +294,15 @@
                       <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->arodsphere }}</td>
-                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->arodcyl }} </td>
-                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->arodaxis }} </td>
+                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="arodsph" value="{{ $combinedResult->arodsphere }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="arodcyl" value="{{ $combinedResult->arodcyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="arodaxis" value="{{ $combinedResult->arodaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->arossphere }}</td>
-                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->aroscyl }} </td>
-                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->arosaxis}} </td>
+                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="arosph" value="{{ $combinedResult->arossphere }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="aroscyl" value="{{ $combinedResult->aroscyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="arosaxis" value="{{ $combinedResult->arosaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -270,6 +313,10 @@
                 @container(max-width:360px){.table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-360{display: none;}}
                 @container(max-width:480px){.table-3e1aa050-7954-44d8-94a8-b2590c05fc7d-column-480{display: none;}}
               </style>
+              <p class="px-4 pt-3 text-sm text-[#0e161b]">
+                <span class="font-medium">P.D. (Pupillary Distance):</span>
+                <input name="arpd" type="number" step="any" min="40" max="85" value="{{ $combinedResult->arpd }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0 inline-block max-w-[120px]" /> mm
+              </p>
             </div>
               <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Retinoscope</h2>
             <div class="px-4 py-3 @container">
@@ -293,15 +340,15 @@
                       <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->rodsph }}</td>
-                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->rodcyl }} </td>
-                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->rodaxis }} </td>
+                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="rodsph" value="{{ $combinedResult->rodsph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="rodcyl" value="{{ $combinedResult->rodcyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="rodaxis" value="{{ $combinedResult->rodaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->rossph}} </td>
-                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{$combinedResult->roscyl }} </td>
-                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->rosaxis }} </td>
+                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="rossph" value="{{ $combinedResult->rossph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="roscyl" value="{{ $combinedResult->roscyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-41c02972-1f93-4d83-95a0-81b214e4b82d-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="rosaxis" value="{{ $combinedResult->rosaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -344,21 +391,21 @@
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->srodsphere }} </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->srodcyl }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->srodaxis}} </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->srodva }}  </td>
-                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->srodadd }}</td>
-                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->srodnva }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srodsph" value="{{ $combinedResult->srodsphere }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srodcyl" value="{{ $combinedResult->srodcyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srodaxis" value="{{ $combinedResult->srodaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srodva" value="{{ $combinedResult->srodva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srodadd" value="{{ $combinedResult->srodadd }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srodnva" value="{{ $combinedResult->srodnva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->srosphere }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->sroscyl }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->srosaxis }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->srosva }}</td>
-                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->srosadd }}</td>
-                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->srosnva }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srosph" value="{{ $leftEye?->srosphere }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="sroscyl" value="{{ $leftEye?->sroscyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srosaxis" value="{{ $leftEye?->srosaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srosva" value="{{ $leftEye?->srosva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srosadd" value="{{ $leftEye?->srosadd }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="srosnva" value="{{ $leftEye?->srosnva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -403,25 +450,26 @@
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->fodsph }} </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->fodcyl }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->fodaxis}} </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"> {{ $combinedResult->fodva }}  </td>
-                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->fodadd }}</td>
-                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->fodnva }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fodsph" value="{{ $combinedResult->fodsph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fodcyl" value="{{ $combinedResult->fodcyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fodaxis" value="{{ $combinedResult->fodaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fodva" value="{{ $combinedResult->fodva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fodadd" value="{{ $combinedResult->fodadd }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fodnva" value="{{ $combinedResult->fodnva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->fossph }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->foscyl }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->fosaxis }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->fosva }}</td>
-                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->fosadd }}</td>
-                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResults[1]->fosnva}}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fossph" value="{{ $leftEye?->fossph }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="foscyl" value="{{ $leftEye?->foscyl }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fosaxis" value="{{ $leftEye?->fosaxis }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fosva" value="{{ $leftEye?->fosva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fosadd" value="{{ $leftEye?->fosadd }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                        <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="fosnva" value="{{ $leftEye?->fosnva }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+            </div>
 
               {{-- IOP --}}
                <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">IOP</h2>
@@ -444,18 +492,23 @@
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Right Eye
                       </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->odcct }} </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->odnct }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="odccct" value="{{ $combinedResult->odccct }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="odnct" value="{{ $combinedResult->odnct }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Left Eye</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->oscct }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->osnct }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="oscct" value="{{ $combinedResult->oscct }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="osnct" value="{{ $combinedResult->osnct }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                       
                     </tr>
                   </tbody>
                 </table>
               </div>
+              <p class="pt-3 text-sm text-[#0e161b]">
+                <span class="font-medium">IOP taken:</span>
+                <input name="iop_taken_at" type="datetime-local" value="{{ $combinedResult->iop_taken_at?->format('Y-m-d\TH:i') }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0 inline-block max-w-[240px]" />
+              </p>
+            </div>
 
               {{-- External Examination And Internal Examination --}}
                <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">External Examination And Internal Examination</h2>
@@ -478,53 +531,53 @@
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">
                         Eyelid
                       </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->eyelidod }} </td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->eyelidos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="eyelidod" value="{{ $combinedResult->eyelidod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="eyelidos" value="{{ $combinedResult->eyelidos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Conjuctiva</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->conjuctivaod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->conjuctivaos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="conjuctivaod" value="{{ $combinedResult->conjuctivaod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="conjuctivaos" value="{{ $combinedResult->conjuctivaos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Cornea</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->corneaod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->corneaos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="corneaod" value="{{ $combinedResult->corneaod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="corneaos" value="{{ $combinedResult->corneaos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Pupil</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->pupilod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->pupilos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="pupilod" value="{{ $combinedResult->pupilod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="pupilos" value="{{ $combinedResult->pupilos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Iris</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->irisod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->irisos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="irisod" value="{{ $combinedResult->irisod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="irisos" value="{{ $combinedResult->irisos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Lens</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->lensod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->lensos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="lensod" value="{{ $combinedResult->lensod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="lensos" value="{{ $combinedResult->lensos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Virtreous</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->vitreousod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->vitreousos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="vitreousod" value="{{ $combinedResult->vitreousod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="vitreousos" value="{{ $combinedResult->vitreousos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">C/D Ratio</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->cdratiood }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->cdratioos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="cdratiood" value="{{ $combinedResult->cdratiood }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="cdratioos" value="{{ $combinedResult->cdratioos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                     </tr>
                       <tr class="border-t border-t-[#d0dee7]">
                       <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-120 h-[72px] px-4 py-2 w-[400px] text-[#0e161b] text-sm font-normal leading-normal">Macula</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->macularod }}</td>
-                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal">{{ $combinedResult->maculaos }}</td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="macularod" value="{{ $combinedResult->macularod }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
+                      <td class="table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4e7a97] text-sm font-normal leading-normal"><input name="maculaos" value="{{ $combinedResult->maculaos }}" class="w-full min-w-[80px] rounded-md border border-[#d0dee7] bg-white px-2 py-1 text-sm text-[#0e161b] focus:border-[#1993e5] focus:ring-0" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -537,10 +590,54 @@
                 @container(max-width:600px){.table-ae47780c-e688-4c02-9f3e-0f37f1371680-column-600{display: none;}}
               </style>
             </div>
+              <div class="flex justify-end px-4 pt-4">
+                <button type="submit" class="vitals-card-save flex items-center justify-center rounded-lg h-10 px-4 bg-[#1993e5] text-slate-50 text-sm font-bold"><span>Save changes to this visit</span></button>
+              </div>
+            </form>
+            @empty
+              <p class="px-4 py-6 text-[#4e7a97] text-sm">No vitals recorded for this patient.</p>
+            @endforelse
           </div>
         </div>
-           @endforeach
       </div>
     </div>
+      <script>
+      (function () {
+        var dirty = false;
+        document.querySelectorAll('.vitals-card-form').forEach(function (form) {
+          // Enter in a single-line field moves to the next field instead of saving the visit.
+          form.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter' || event.target.tagName !== 'INPUT') {
+              return;
+            }
+            event.preventDefault();
+            var fields = Array.prototype.filter.call(form.elements, function (el) {
+              return (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && el.type !== 'hidden' && !el.disabled;
+            });
+            var next = fields[fields.indexOf(event.target) + 1];
+            if (next) {
+              next.focus();
+            }
+          });
+          form.addEventListener('input', function () { dirty = true; });
+          // Lock this card's Save buttons after the first click so a double click can't save twice.
+          form.addEventListener('submit', function () {
+            dirty = false;
+            form.querySelectorAll('.vitals-card-save').forEach(function (button) {
+              button.disabled = true;
+              button.classList.add('opacity-60', 'cursor-not-allowed');
+              button.querySelector('span').textContent = 'Saving…';
+            });
+          });
+        });
+        // Warn before leaving the page with edits that were not saved.
+        window.addEventListener('beforeunload', function (event) {
+          if (dirty) {
+            event.preventDefault();
+            event.returnValue = '';
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

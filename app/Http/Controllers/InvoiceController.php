@@ -62,6 +62,13 @@ class InvoiceController extends Controller
 
 
   public function save(Request $request){
+    // Drop rows left completely empty (e.g. "Add" clicked once too often) so they don't block the invoice.
+    $request->merge([
+        'inputs' => array_values(array_filter((array) $request->input('inputs', []), function ($row) {
+            return is_array($row) && collect($row)->contains(fn ($value) => filled($value));
+        })),
+    ]);
+
     // Validate the request
                 $validatedData = $request->validate([
                     'inputs' => 'required|array',
@@ -69,6 +76,13 @@ class InvoiceController extends Controller
                     'inputs.*.name' => 'required|string',
                     'inputs.*.price' => 'required|numeric',
                     'inputs.*.qty' => 'required|integer',
+                ], [
+                    'inputs.required' => 'Add at least one item to the invoice.',
+                    'inputs.*.name.required' => 'Row :position: item name is required.',
+                    'inputs.*.price.required' => 'Row :position: price is required. Pick the item from the list so its price fills in.',
+                    'inputs.*.price.numeric' => 'Row :position: price must be a number (no commas or currency signs).',
+                    'inputs.*.qty.required' => 'Row :position: quantity is required.',
+                    'inputs.*.qty.integer' => 'Row :position: quantity must be a whole number.',
                 ]);
     
     // Calculate subtotal
@@ -111,11 +125,9 @@ class InvoiceController extends Controller
         // Remove the (Drug), (Lens), or (Frame) suffix if present
         $cleanName = preg_replace('/\s*\((Drug|Lens|Frame)\)$/', '', $name);
 
+        // Low stock never blocks an invoice. Stock may go below zero, which shows how much was sold beyond what was recorded.
         $drug = Drug::where('name', $cleanName)->first();
         if ($drug) {
-            if ($drug->quantity - $qty < 1) {
-                return redirect(route('pages.status'))->with('success', 'Insufficient Drug Stock');
-            }
             $drug->quantity -= $qty;
             $drug->save();
             continue;
@@ -123,9 +135,6 @@ class InvoiceController extends Controller
 
         $lens = Lens::where('name', $cleanName)->first();
         if ($lens) {
-            if ($lens->quantity - $qty < 1) {
-                return redirect(route('pages.status'))->with('success', 'Insufficient Lens Stock');
-            }
             $lens->quantity -= $qty;
             $lens->save();
             continue;
@@ -133,9 +142,6 @@ class InvoiceController extends Controller
 
         $frame = Frame::where('name', $cleanName)->first();
         if ($frame) {
-            if ($frame->quantity - $qty < 1) {
-                return redirect(route('pages.status'))->with('success', 'Insufficient Frame Stock');
-            }
             $frame->quantity -= $qty;
             $frame->save();
             continue;

@@ -51,8 +51,8 @@
                     </div>
                 </div> --}}
             </header>
-            <div class="px-40 flex flex-1 justify-center py-5">
-                <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="px-6 flex flex-1 justify-center py-5">
+                <div class="layout-content-container flex flex-col w-full flex-1">
                     <div class="flex flex-wrap justify-between gap-3 p-4">
                         <div class="flex min-w-72 flex-col gap-3">
                             <p class="text-[#121417] tracking-light text-[32px] font-bold leading-tight">Patient History
@@ -62,42 +62,42 @@
                         </div>
                     </div>
                     <div class="px-4 py-3 @container">
-                        <div class="flex overflow-hidden rounded-xl border border-[#dde0e4] bg-white">
+                        <div class="flex overflow-x-auto rounded-xl border border-[#dde0e4] bg-white">
                             <table class="flex-1">
                                 <thead>
                                     <tr class="bg-white">
                                       <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] min-w-[170px] text-sm font-medium leading-normal">
                                             Date
                                         </th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             Patient ID
                                         </th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             Dosage</th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             Duration
                                         </th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             Tab</th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             Gutt</th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             OC</th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             Sur</th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
                                             RTC</th>
                                         <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
+                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 px-4 py-3 text-left text-[#121417] min-w-[260px] text-sm font-medium leading-normal">
                                             Remark</th>
                                     </tr>
                                 </thead>
@@ -106,169 +106,70 @@
 
                                     @foreach ($treatments as $treatment)
                                         <tr class="border-t border-t-[#dde0e4]">
-                                          <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal"> {{ \Carbon\Carbon::parse($treatment->created_at)->format('F j, Y g:i A') }} </td>
+                                          <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal"> {{ \Carbon\Carbon::parse($treatment->created_at)->format('F j, Y g:i A') }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->patient_id }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->dosage }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->duration }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->tab }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->gutt }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->oc }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->sur }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
                                                 {{ $treatment->rtc }} </td>
                                             <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->remark }} </td>
+                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
+                                                <span class="whitespace-pre-line">{{ $treatment->remark }}</span> </td>
                                         </tr>
                                     @endforeach
 
                                 </tbody>
                             </table>
                         </div>
-                        <style>
-                            @container(max-width:120px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:240px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:360px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:480px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:600px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:720px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:840px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:960px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1080px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1200px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1200 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1320px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1320 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1440px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1440 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1560px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1560 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1680px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1680 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1800px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1800 {
-                                    display: none;
-                                }
-                            }
-
-                            @container(max-width:1920px)
-
-                                {
-                                .table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1920 {
-                                    display: none;
-                                }
-                            }
-                        </style>
+                    </div>
+                    {{-- Examinations taken at each vitals visit --}}
+                    <p class="text-[#121417] tracking-light text-[20px] font-bold leading-tight mt-[40px] px-4">Examinations Taken</p>
+                    <div class="px-4 pt-[10px] flex flex-col gap-4">
+                        @forelse ($examinations as $exam)
+                            <div class="rounded-xl border border-[#dde0e4] bg-white p-4">
+                                <p class="text-[#121417] text-sm font-medium leading-normal pb-3">
+                                    {{ \Carbon\Carbon::parse($exam['date'])->format('F j, Y g:i A') }}
+                                </p>
+                                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
+                                    @foreach ($exam['sections'] as $section => $taken)
+                                        @if ($taken)
+                                            <div class="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
+                                                <span aria-hidden="true" class="font-bold">✓</span>
+                                                <span>{{ $section }}</span>
+                                                <span class="sr-only">(taken)</span>
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm text-[#677583]">
+                                                <span aria-hidden="true">–</span>
+                                                <span>{{ $section }}</span>
+                                                <span class="sr-only">(not taken)</span>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-[#677583] text-sm font-normal leading-normal">No examinations recorded for this patient.</p>
+                        @endforelse
                     </div>
                     {{-- Second Table --}}
                      <p class="text-[#121417] tracking-light text-[20px] font-bold leading-tight mt-[40px]">Lens Type</p>

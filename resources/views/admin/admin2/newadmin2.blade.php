@@ -63,99 +63,99 @@
             ></div>
           </div>
         </header>
-        <div class="px-40 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <div class="px-6 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col w-full flex-1">
             <div class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#0e161b] tracking-light text-[32px] font-bold leading-tight min-w-72">Stock Management</p></div>
             <div class="px-4 py-3 @container">
-              <div class="flex overflow-hidden rounded-xl border border-[#d0dde7] bg-slate-50">
+              <div class="flex overflow-x-auto rounded-xl border border-[#d0dde7] bg-slate-50">
                 <table class="flex-1" id="table">
                   <thead>
                     <tr class="bg-slate-50">
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-120 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal" >Date</th>
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-240 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-120 px-4 py-3 text-left text-[#0e161b] w-[170px] text-sm font-medium leading-normal" >Date</th>
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-240 px-4 py-3 text-left text-[#0e161b] w-[160px] text-sm font-medium leading-normal">
                         New Stock
                       </th>
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-360 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-360 px-4 py-3 text-left text-[#0e161b] w-[340px] text-sm font-medium leading-normal">
                         Name
                       </th>
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-480 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-480 px-4 py-3 text-left text-[#0e161b] w-[200px] text-sm font-medium leading-normal">
                         Patient Code
                       </th>
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-600 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">Reciept Number</th>
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-720 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">Qty Out</th>
-                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">Qty In</th>
-                       <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">Balance</th>
-                        <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 px-4 py-3 text-left text-[#0e161b] w-[400px] text-sm font-medium leading-normal">Action</th>
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-600 px-4 py-3 text-left text-[#0e161b] w-[200px] text-sm font-medium leading-normal">Reciept Number</th>
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-720 px-4 py-3 text-left text-[#0e161b] w-[130px] text-sm font-medium leading-normal">Qty In</th>
+                      <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 px-4 py-3 text-left text-[#0e161b] w-[130px] text-sm font-medium leading-normal">Qty Out</th>
+                       <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 px-4 py-3 text-left text-[#0e161b] w-[130px] text-sm font-medium leading-normal">Balance</th>
+                        <th class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 px-4 py-3 text-left text-[#0e161b] w-[120px] text-sm font-medium leading-normal">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr class="border-t border-t-[#d0dde7]">
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-120 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-120 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                             placeholder="Enter Date"
                             name="inputs[0][date]"
                             type="date"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-240 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-240 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                           <input
                             placeholder="Enter Stock"
                                 name="inputs[0][new_stock]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-360 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-360 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                         placeholder="Enter Stock Name"
                             name="inputs[0][name]"
-                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                         value=""
                         />
                       </td>
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-480 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-480 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                             placeholder="Enter Patient Code"
                             name="inputs[0][patient_code]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-600 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-600 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                             placeholder="Enter Code"
                             name="inputs[0][booklet_no]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-720 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-720 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                             placeholder="Enter Quantity in"
                             name="inputs[0][qty_in]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                      <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                             placeholder="Enter Quantity Out"
                             name="inputs[0][qty_out]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                        <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                        <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                          <input
                             placeholder="Enter Balance"
                             name="inputs[0][balance]"
-                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal"
+                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal"
                             value=""
                             />
                       </td>
-                        <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 h-[72px] px-4 py-2 w-[400px] text-[#4d7999] text-sm font-normal leading-normal">
+                        <td class="table-15609774-3410-47a9-be9c-d86617fbc518-column-840 h-[72px] px-4 py-2 text-[#4d7999] text-sm font-normal leading-normal">
                            <button
                            type="button"
                            name="add"
@@ -169,15 +169,6 @@
                   </tbody>
                 </table>
               </div>
-              <style>
-                          @container(max-width:120px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-120{display: none;}}
-                @container(max-width:240px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-240{display: none;}}
-                @container(max-width:360px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-360{display: none;}}
-                @container(max-width:480px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-480{display: none;}}
-                @container(max-width:600px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-600{display: none;}}
-                @container(max-width:720px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-720{display: none;}}
-                @container(max-width:840px){.table-15609774-3410-47a9-be9c-d86617fbc518-column-840{display: none;}}
-              </style>
             </div>
         
             <div class="flex px-4 py-3 justify-end">
@@ -202,69 +193,69 @@ $(document).ready(function() {
     var newRow = $('<tr class="border-t border-t-[#d0dde7]">');
 
     // Date
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'date',
       name: 'inputs[' + rowCounter + '][date]',
       placeholder: 'Enter Date',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
 
     // New Stock
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][new_stock]',
       placeholder: 'Enter Stock',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
 
     // Name
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][name]',
       placeholder: 'Enter Name',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
 
     // patient code
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][patient_code]',
       placeholder: 'Enter Patient Code',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
       //Reciept No
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][booklet_no]',
       placeholder: 'Enter Code',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
       //Qunatity In
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][qty_in]',
       placeholder: 'Enter Quantity In',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
          //Qunatity out
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][qty_out]',
       placeholder: 'Enter Quantity Out',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
          //Balance 
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<input>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<input>', {
       type: 'text',
       name: 'inputs[' + rowCounter + '][balance]',
       placeholder: 'Enter Balance',
-      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] p-[15px] text-base font-normal leading-normal'
+      class: 'form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#111518] focus:outline-0 focus:ring-0 border border-[#d5dce2] bg-gray-50 focus:border-[#d5dce2] h-14 placeholder:text-[#5e7687] px-3 text-base font-normal leading-normal'
     })));
 
     // Add the remaining cells similarly...
 
     // Remove button
-    newRow.append($('<td class="h-[72px] px-4 py-2 w-[400px]">').append($('<button>', {
+    newRow.append($('<td class="h-[72px] px-4 py-2">').append($('<button>', {
       type: 'button',
       class: 'remove-table-row flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-red-500 text-white text-sm font-bold leading-normal tracking-[0.015em]',
       text: 'Remove'

@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoice/search', [InvoiceController::class, 'search'])->name('invoice.search');
     Route::post('/doctors/treatment/store', [TreatmentController::class, 'store'])->name('treatment.store');
     Route::post('/doctors/vitals/store', [VitalsController::class, 'store'])->name('vitals.store');
+    Route::get('/doctors/vitals/{vital}/edit', [VitalsController::class, 'edit'])->name('vitals.edit');
+    Route::put('/doctors/vitals/{vital}', [VitalsController::class, 'update'])->name('vitals.update');
     Route::get('/search/treatment', [VitalsController:: class, 'show'])->name('search.treatment'); //Previous Optician Default Page
     Route::get('/search/treatment/get', [VitalsController::class, 'search'])->name('search.get');
     Route::get('/search/vitals', [VitalsController::class, 'display'])->name('search.vitals');
@@ -241,6 +243,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/patient-cards/{id}', [PatientCardController::class,'show'])->name('patient.show');
     Route::get('/patient-cards/{id}/edit', [PatientCardController::class,'edit'])->name('patient.edit');
     Route::put('/patient-cards/{id}', [PatientCardController::class,'update'])->name('patient.update');
+    Route::put('/patient-cards/{id}/summary', [PatientCardController::class,'updateSummary'])->name('patient.summary.update');
     Route::get('/patient/pid/{pid}', [PatientCardController::class,'redirectByPid'])->name('patient.bypid')->where('pid', '.*');
     Route::post('/patients/{id}/check-in', [PatientCardController::class,'checkIn'])->name('patient.checkin');
 }); //Closing Block

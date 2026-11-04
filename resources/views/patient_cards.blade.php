@@ -141,6 +141,36 @@
                 <p class="text-[#0e161b] text-sm font-normal leading-normal">Dr. Olivia Bennett</p>
               </div> --}}
             </div>
+            <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Patient Summary</h2>
+            <div class="px-4 pb-4">
+              <div class="rounded-lg border border-[#d0dee7] bg-white p-4">
+                @if (filled($user->summary))
+                  <p class="text-[#0e161b] text-sm font-normal leading-relaxed whitespace-pre-line">{{ $user->summary }}</p>
+                @else
+                  <p class="text-[#4e7a97] text-sm font-normal italic">No summary yet.</p>
+                @endif
+                @if ($user->summary_updated_at)
+                  <p class="text-[#4e7a97] text-xs font-normal pt-3">
+                    Last updated by {{ $user->summary_updated_by }} on {{ $user->summary_updated_at->format('F j, Y \a\t g:i A') }}
+                  </p>
+                @endif
+              </div>
+              <form method="POST" action="{{ route('patient.summary.update', $user->id) }}" class="pt-3">
+                @csrf
+                @method('PUT')
+                <label for="summary" class="block text-[#0e161b] text-sm font-medium pb-2">Write or edit the summary</label>
+                <textarea id="summary" name="summary" rows="6" maxlength="5000"
+                  placeholder="e.g. Diagnosis, ongoing treatment, allergies, follow-up notes..."
+                  class="form-textarea w-full rounded-lg border border-[#d0dee7] bg-white text-[#0e161b] text-sm p-3 focus:border-[#1993e5] focus:ring-0">{{ old('summary', $user->summary) }}</textarea>
+                @error('summary')
+                  <p class="text-sm text-red-600 pt-1">{{ $message }}</p>
+                @enderror
+                <button type="submit"
+                  class="mt-2 flex min-w-[84px] items-center justify-center rounded-lg h-10 px-4 bg-[#1993e5] text-slate-50 text-sm font-bold leading-normal tracking-[0.015em]">
+                  Save Summary
+                </button>
+              </form>
+            </div>
             <h2 class="text-[#0e161b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Current Status</h2>
             <div class="p-4 grid grid-cols-2">
               <div class="flex flex-col gap-1 border-t border-solid border-t-[#d0dee7] py-4 pr-2">

@@ -42,8 +42,8 @@
             </header>
             <main class="flex-1 bg-slate-50 px-10 py-8">
                     <h2 class="text-2xl font-bold text-slate-800 mb-6">Patient Notifications</h2>
-                   @foreach ($notifications as $notification)
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                   @foreach ($notifications as $notification)
                         <div class="rounded-lg border border-gray-200 bg-white shadow-md p-6 hover:shadow-lg transition-shadow duration-200">
                             <div class="flex items-start gap-4">
                                 <div class="size-16 rounded-full bg-center bg-no-repeat bg-cover border border-gray-200 shadow-sm flex-shrink-0"
@@ -71,8 +71,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
                 @endforeach
+                    </div>
 
                 <script>
                     function copyPid(buttonElement, pid) {
@@ -88,8 +88,6 @@
                         });
                     }
                 </script>
-                  
-                </div>
             </main>
         </div>
     </div>

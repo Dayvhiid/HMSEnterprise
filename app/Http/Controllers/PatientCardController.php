@@ -63,6 +63,26 @@ class PatientCardController extends Controller
     return redirect(route('patient.show', $id))->with('success', 'Patient details updated successfully');
 }
 
+    // Only touches the summary fields, so saving a summary can never blank the patient's other details.
+    public function updateSummary(Request $request, $id)
+{
+    $patient = PatientInfo::findOrFail($id);
+
+    $validated = $request->validate([
+        'summary' => 'nullable|string|max:5000',
+    ], [
+        'summary.max' => 'The patient summary cannot be longer than 5,000 characters.',
+    ]);
+
+    $patient->update([
+        'summary' => $validated['summary'] ?? null,
+        'summary_updated_by' => auth()->user()->name,
+        'summary_updated_at' => now(),
+    ]);
+
+    return redirect(route('patient.show', $patient->id))->with('success', 'Patient summary saved.');
+}
+
     public function redirectByPid($pid)
 {
     $patient = PatientInfo::where('patient_id', $pid)->firstOrFail();

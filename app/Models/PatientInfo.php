@@ -25,5 +25,12 @@ class PatientInfo extends Model
         'fullname',
         'datee',
         'age',
+        'summary',
+        'summary_updated_by',
+        'summary_updated_at',
+    ];
+
+    protected $casts = [
+        'summary_updated_at' => 'datetime',
     ];
 }

@@ -32,12 +32,23 @@
       
         {{-- <a href="{{route('invoice.find')}}">Find Invoice</a> --}}
         
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <p class="mb-1 fw-bold">The invoice was not saved. Please fix the following and click Generate Invoice again:</p>
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{route('invoice.save')}}" method="POST">
             @csrf
             @method('POST')
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Enter Patient Name" aria-label="Recipient's username" aria-describedby="basic-addon2" name="pid">
-                <td><input type="number" name="discount" placeholder="Enter Percentage discounts" class="form-control" required></td>
+                <input type="text" class="form-control" placeholder="Enter Patient Name" aria-label="Recipient's username" aria-describedby="basic-addon2" name="pid" value="{{ old('pid') }}">
+                <td><input type="number" name="discount" placeholder="Enter Percentage discounts" class="form-control" value="{{ old('discount') }}" required></td>
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary" type="submit">Generate Invoice</button>
                 </div>
@@ -57,12 +68,19 @@
                     
                     <td><button type="button" name="add" id="add" class="btn btn-success">Add</button></td>
                 </tr> --}}
+                @php($oldInputs = array_values(old('inputs', [[]])) ?: [[]])
+                @foreach ($oldInputs as $i => $row)
                 <tr>
-                    <td><input type="text" name="inputs[0][name]" class="form-control item-name" placeholder="Select Drug / Lens / Frame"></td>
-                    <td><input type="text" name="inputs[0][price]" class="form-control item-price" placeholder="Price" readonly></td>
-                    <td><input type="number" name="inputs[0][qty]" class="form-control item-qty" placeholder="Quantity" min="1"></td>
+                    <td><input type="text" name="inputs[{{ $i }}][name]" class="form-control item-name" placeholder="Select Drug / Lens / Frame" value="{{ $row['name'] ?? '' }}"></td>
+                    <td><input type="text" name="inputs[{{ $i }}][price]" class="form-control item-price" placeholder="Price" value="{{ $row['price'] ?? '' }}" readonly></td>
+                    <td><input type="number" name="inputs[{{ $i }}][qty]" class="form-control item-qty" placeholder="Quantity" min="1" value="{{ $row['qty'] ?? '' }}"></td>
+                    @if ($i === 0)
                     <td><button type="button" name="add" id="add" class="btn btn-success">Add</button></td>
+                    @else
+                    <td><button type="button" class="btn btn-danger remove-table-row">Remove</button></td>
+                    @endif
                  </tr>
+                @endforeach
             </table>
 
             {{-- <div class="form-group">
@@ -120,7 +138,8 @@ async function loadItems() {
 
 loadItems();
 
-var rowCounter = 0;
+// Continue numbering after any rows restored from a failed submit.
+var rowCounter = {{ count($oldInputs) - 1 }};
 
 $('#add').click(function() {
   rowCounter++;

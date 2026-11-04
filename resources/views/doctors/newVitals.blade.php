@@ -12,9 +12,35 @@
 </head>
 
 <body>
-<form method="post" action="{{route('vitals.store')}}">   
+@php
+    // $vital and $prefill are only set when editing a saved visit (VitalsController::edit).
+    $editing = isset($vital);
+    $prefill = $prefill ?? [];
+    $v = fn (string $name) => old($name, $prefill[$name] ?? '');
+@endphp
+<form method="post" action="{{ $editing ? route('vitals.update', $vital) : route('vitals.store') }}" id="vitals-form">
    @csrf
-  @method('POST')     
+  @method($editing ? 'PUT' : 'POST')
+  @unless ($editing)
+    {{-- One-time token: lets the server ignore a second submit of this same form. --}}
+    <input type="hidden" name="form_token" value="{{ old('form_token', (string) \Illuminate\Support\Str::uuid()) }}" />
+  @endunless
+  @if ($editing)
+    <div class="mx-4 mt-4 rounded-lg bg-amber-100 p-3 text-sm text-amber-900">
+      Editing the visit of <strong>{{ $vital->created_at->format('F j, Y g:i A') }}</strong> for patient
+      <strong>{{ $vital->patient_code }}</strong>. Saving updates this visit; it does not create a new one.
+    </div>
+  @endif
+  @if ($errors->any())
+    <div class="mx-4 mt-4 rounded-lg bg-red-100 p-3 text-sm text-red-800">
+      <p class="font-bold">The vitals were not saved. Please fix the following and click Save again (everything you typed is still here):</p>
+      <ul class="list-disc pl-5">
+        @foreach ($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+  @endif
     <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
         style='font-family: Manrope, "Noto Sans", sans-serif;'>
         <div class="layout-container flex h-full grow flex-col">
@@ -54,9 +80,8 @@
                         <label class="flex flex-col min-w-40 flex-1">
                             <p class="text-[#121416] text-base font-medium leading-normal pb-2">Patient ID</p>
                             <input placeholder="Enter Patient ID"
-                               name="patient_code"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
-                                value="" />
+                               name="patient_code" @if ($editing) readonly @endif value="{{ $v('patient_code') }}"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                         </label>
                     </div>
                     <h3 class="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
@@ -66,7 +91,7 @@
                             <p class="text-[#121416] text-base font-medium leading-normal pb-2">CC</p>
                             <textarea placeholder="Chief Complaint"
                                  name="cc"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"></textarea>
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal">{{ $v('cc') }}</textarea>
                         </label>
                     </div>
                     <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
@@ -74,7 +99,7 @@
                             <p class="text-[#121416] text-base font-medium leading-normal pb-2">POHX</p>
                             <textarea placeholder="Past Ocular History"
                                  name="pohx"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"></textarea>
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal">{{ $v('pohx') }}</textarea>
                         </label>
                     </div>
                     <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
@@ -82,7 +107,7 @@
                             <p class="text-[#121416] text-base font-medium leading-normal pb-2">LEE</p>
                             <textarea placeholder="Last Eye Exam"
                                  name="lee"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"></textarea>
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal">{{ $v('lee') }}</textarea>
                         </label>
                     </div>
                     <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
@@ -90,7 +115,7 @@
                             <p class="text-[#121416] text-base font-medium leading-normal pb-2">PmHx</p>
                             <textarea placeholder="Past Medical History"
                                     name="pmhx"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"></textarea>
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal">{{ $v('pmhx') }}</textarea>
                         </label>
                     </div>
                     <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
@@ -98,7 +123,7 @@
                             <p class="text-[#121416] text-base font-medium leading-normal pb-2">PfoHx</p>
                             <textarea placeholder="Past Family Ocular History"
                                     name="pfohx"
-                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"></textarea>
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] min-h-36 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal">{{ $v('pfohx') }}</textarea>
                         </label>
                     </div>
                     <h3 class="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Visual
@@ -125,17 +150,17 @@
                                         <td class="text-[#121416] text-base font-medium leading-normal pb-2">OD:</td>
                                         <td
                                             class="table-84efdf4d-6f29-4998-ac96-b8ff6bc2af6d-column-120 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
-                                            <input name="ODunaided"
+                                            <input name="ODunaided" value="{{ $v('ODunaided') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                         <td
                                             class="table-84efdf4d-6f29-4998-ac96-b8ff6bc2af6d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
-                                            <input name="ODpinhole"
+                                            <input name="ODpinhole" value="{{ $v('ODpinhole') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                         <td
                                             class="table-84efdf4d-6f29-4998-ac96-b8ff6bc2af6d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
-                                            <input name="ODnearVA"
+                                            <input name="ODnearVA" value="{{ $v('ODnearVA') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                     </tr>
@@ -143,20 +168,18 @@
                                         <td class="text-[#121416] text-base font-medium leading-normal pb-2">OS:</td>
                                         <td
                                             class="table-84efdf4d-6f29-4998-ac96-b8ff6bc2af6d-column-120 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
-                                            <input name="OSunaided"
+                                            <input name="OSunaided" value="{{ $v('OSunaided') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                         <td
                                             class="table-84efdf4d-6f29-4998-ac96-b8ff6bc2af6d-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
-                                            <input name="OSpinhole"
-                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
-                                                value="" />
+                                            <input name="OSpinhole" value="{{ $v('OSpinhole') }}"
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                         <td
                                             class="table-84efdf4d-6f29-4998-ac96-b8ff6bc2af6d-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
-                                            <input name="OSnearVA"
-                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
-                                                value="" />
+                                            <input name="OSnearVA" value="{{ $v('OSnearVA') }}"
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -221,30 +244,28 @@
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                               name="ODSPH"
+                                               name="ODSPH" value="{{ $v('ODSPH') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ODCYL"
+                                                name="ODCYL" value="{{ $v('ODCYL') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ODAXIS"
-                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
-                                                value="" />
+                                                name="ODAXIS" value="{{ $v('ODAXIS') }}"
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ODVA"
-                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
-                                                value="" />
+                                                name="ODVA" value="{{ $v('ODVA') }}"
+                                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal" />
                                         </td>
                                     </tr>
                                     
@@ -255,28 +276,28 @@
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="OSSPH"
+                                                name="OSSPH" value="{{ $v('OSSPH') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="OSCYL"
+                                                name="OSCYL" value="{{ $v('OSCYL') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                 name="OSAXIS"
+                                                 name="OSAXIS" value="{{ $v('OSAXIS') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="OSVA"
+                                                name="OSVA" value="{{ $v('OSVA') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                 />
                                         </td>
@@ -290,28 +311,28 @@
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ADDSPH"
+                                                name="ADDSPH" value="{{ $v('ADDSPH') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ADDCYL"
+                                                name="ADDCYL" value="{{ $v('ADDCYL') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ADDAXIS"
+                                                name="ADDAXIS" value="{{ $v('ADDAXIS') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-813d7553-8f69-4f0b-b043-f2a935dc8386-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="ADDVA"
+                                                name="ADDVA" value="{{ $v('ADDVA') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -366,21 +387,21 @@
                                         <td
                                             class="table-92717181-a147-4ddb-adb4-6625d5f172ab-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="arodsph"
+                                                name="arodsph" value="{{ $v('arodsph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-92717181-a147-4ddb-adb4-6625d5f172ab-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="arodcyl"
+                                                name="arodcyl" value="{{ $v('arodcyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-92717181-a147-4ddb-adb4-6625d5f172ab-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="arodaxis"
+                                                name="arodaxis" value="{{ $v('arodaxis') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -393,21 +414,21 @@
                                         <td
                                             class="table-92717181-a147-4ddb-adb4-6625d5f172ab-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                 name="arosph"
+                                                 name="arosph" value="{{ $v('arosph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-92717181-a147-4ddb-adb4-6625d5f172ab-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="aroscyl"
+                                                name="aroscyl" value="{{ $v('aroscyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-92717181-a147-4ddb-adb4-6625d5f172ab-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="arosaxis"
+                                                name="arosaxis" value="{{ $v('arosaxis') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -433,6 +454,15 @@
                                 }
                             }
                         </style>
+                    </div>
+                    <div class="px-4 py-3">
+                        <label for="arpd" class="block text-[#121416] text-base font-medium leading-normal pb-2">
+                            P.D. (Pupillary Distance, mm)</label>
+                        <input id="arpd" name="arpd" value="{{ $v('arpd') }}" type="number" step="any" min="40" max="85" placeholder="e.g. 62"
+                            class="form-input flex w-full max-w-[240px] min-w-0 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] px-3 text-base font-normal leading-normal" />
+                        @error('arpd')
+                            <p class="text-sm text-red-600 pt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     <h3 class="text-[#121416] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
                         Retinoscope</h3>
@@ -463,21 +493,21 @@
                                         <td
                                             class="table-bbcba2a0-62a2-4c7e-a50d-2ba8ff3dc7f1-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="rodsph"
+                                                name="rodsph" value="{{ $v('rodsph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                          <td
                                             class="table-bbcba2a0-62a2-4c7e-a50d-2ba8ff3dc7f1-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                               <input 
-                                                 name="rodcyl"
+                                                 name="rodcyl" value="{{ $v('rodcyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                          <td
                                             class="table-bbcba2a0-62a2-4c7e-a50d-2ba8ff3dc7f1-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input        
-                                                 name="rodaxis"                                
+                                                 name="rodaxis" value="{{ $v('rodaxis') }}"                                
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -489,21 +519,21 @@
                                         <td
                                             class="table-bbcba2a0-62a2-4c7e-a50d-2ba8ff3dc7f1-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="rossph"
+                                                name="rossph" value="{{ $v('rossph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                          <td
                                             class="table-bbcba2a0-62a2-4c7e-a50d-2ba8ff3dc7f1-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                               <input 
-                                                 name="roscyl"
+                                                 name="roscyl" value="{{ $v('roscyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                          <td
                                             class="table-bbcba2a0-62a2-4c7e-a50d-2ba8ff3dc7f1-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input  
-                                                 name="rosaxis"                                      
+                                                 name="rosaxis" value="{{ $v('rosaxis') }}"                                      
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -568,42 +598,42 @@
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="srodsph"
+                                                name="srodsph" value="{{ $v('srodsph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                               name="srodcyl"
+                                               name="srodcyl" value="{{ $v('srodcyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="srodaxis"
+                                                name="srodaxis" value="{{ $v('srodaxis') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                 name="srodva"
+                                                 name="srodva" value="{{ $v('srodva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                               <input 
-                                                name="srodadd"
+                                                name="srodadd" value="{{ $v('srodadd') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="srodnva"
+                                                name="srodnva" value="{{ $v('srodnva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -616,42 +646,42 @@
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="srosph"
+                                                name="srosph" value="{{ $v('srosph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="sroscyl"
+                                                name="sroscyl" value="{{ $v('sroscyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="srosaxis"
+                                                name="srosaxis" value="{{ $v('srosaxis') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="srosva"
+                                                name="srosva" value="{{ $v('srosva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                               <input 
-                                                 name="srosadd"
+                                                 name="srosadd" value="{{ $v('srosadd') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="srosnva"
+                                                name="srosnva" value="{{ $v('srosnva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -734,42 +764,42 @@
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="fodsph"
+                                                name="fodsph" value="{{ $v('fodsph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                               name="fodcyl"
+                                               name="fodcyl" value="{{ $v('fodcyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="fodaxis"
+                                                name="fodaxis" value="{{ $v('fodaxis') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                 name="fodva"
+                                                 name="fodva" value="{{ $v('fodva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                               <input 
-                                                name="fodadd"
+                                                name="fodadd" value="{{ $v('fodadd') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="fodnva"
+                                                name="fodnva" value="{{ $v('fodnva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -782,42 +812,42 @@
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="fossph"
+                                                name="fossph" value="{{ $v('fossph') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-360 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                              <input 
-                                                name="foscyl"
+                                                name="foscyl" value="{{ $v('foscyl') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="fosaxis"
+                                                name="fosaxis" value="{{ $v('fosaxis') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="fosva"
+                                                name="fosva" value="{{ $v('fosva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                               <input 
-                                                 name="fosadd"
+                                                 name="fosadd" value="{{ $v('fosadd') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-be3808f4-ae65-4348-847f-97c6c2c80b35-column-480 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                             <input 
-                                                name="fosnva"
+                                                name="fosnva" value="{{ $v('fosnva') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -852,7 +882,7 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input
-                                               name="odnct"                                 
+                                               name="odnct" value="{{ $v('odnct') }}"                                 
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -860,7 +890,7 @@
                                              
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                          name="odcct"
+                                          name="odccct" value="{{ $v('odccct') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -873,20 +903,33 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                                name="osnct"                               
+                                                name="osnct" value="{{ $v('osnct') }}"                               
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                                name="oscct"
+                                                name="oscct" value="{{ $v('oscct') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="pt-3">
+                            <label for="iop_taken_at" class="block text-[#121416] text-base font-medium leading-normal pb-2">
+                                Date &amp; time IOP was taken</label>
+                            <div class="flex items-center gap-2">
+                                <input id="iop_taken_at" name="iop_taken_at" type="datetime-local" value="{{ $v('iop_taken_at') }}"
+                                    class="form-input flex w-full max-w-[280px] min-w-0 rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 px-3 text-base font-normal leading-normal" />
+                                <button type="button" id="iop-now"
+                                    class="flex items-center justify-center rounded-xl h-14 px-4 bg-[#f1f2f4] text-[#121416] text-sm font-bold">Now</button>
+                            </div>
+                            @error('iop_taken_at')
+                                <p class="text-sm text-red-600 pt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
 
@@ -917,7 +960,7 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input
-                                               name="eyelidod"                                 
+                                               name="eyelidod" value="{{ $v('eyelidod') }}"                                 
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -925,7 +968,7 @@
                                            
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                            name="eyelidos"
+                                            name="eyelidos" value="{{ $v('eyelidos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -938,14 +981,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                              name="conjuctivaod"                            
+                                              name="conjuctivaod" value="{{ $v('conjuctivaod') }}"                            
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                            name="conjuctivaos"
+                                            name="conjuctivaos" value="{{ $v('conjuctivaos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -958,14 +1001,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                               name="corneaod"                            
+                                               name="corneaod" value="{{ $v('corneaod') }}"                            
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                                name="corneaos"
+                                                name="corneaos" value="{{ $v('corneaos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -977,14 +1020,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                                 name="pupilod"                             
+                                                 name="pupilod" value="{{ $v('pupilod') }}"                             
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                                name="pupilos"
+                                                name="pupilos" value="{{ $v('pupilos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -996,14 +1039,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                               name="irisod"                            
+                                               name="irisod" value="{{ $v('irisod') }}"                            
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                                name="irisos"
+                                                name="irisos" value="{{ $v('irisos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -1015,14 +1058,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                              name="lensod"                          
+                                              name="lensod" value="{{ $v('lensod') }}"                          
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                               name="lensos"
+                                               name="lensos" value="{{ $v('lensos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -1034,14 +1077,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                                name="vitreousod"                       
+                                                name="vitreousod" value="{{ $v('vitreousod') }}"                       
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                                name="vitreousos"
+                                                name="vitreousos" value="{{ $v('vitreousos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -1053,14 +1096,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                               name="cdratiood"                               
+                                               name="cdratiood" value="{{ $v('cdratiood') }}"                               
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                               name="cdratioos"
+                                               name="cdratioos" value="{{ $v('cdratioos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -1072,14 +1115,14 @@
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                          <input  
-                                                  name="macularod"                            
+                                                  name="macularod" value="{{ $v('macularod') }}"                            
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
                                         <td
                                             class="table-2a0821a5-4bd2-415b-9ea6-35dff5cd1bb2-column-240 h-[72px] px-4 py-2 w-[400px] text-[#6a7581] text-sm font-normal leading-normal">
                                           <input 
-                                                 name="maculaos"
+                                                 name="maculaos" value="{{ $v('maculaos') }}"
                                                 class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#121416] focus:outline-0 focus:ring-0 border border-[#dde0e3] bg-white focus:border-[#dde0e3] h-14 placeholder:text-[#6a7581] p-[15px] text-base font-normal leading-normal"
                                                  />
                                         </td>
@@ -1108,16 +1151,63 @@
 
                     
                     <div class="flex px-4 py-3 justify-end">
-                        <button
+                        <button type="submit" id="vitals-save" data-label="{{ $editing ? 'Save Changes' : 'Save' }}"
                             class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#5e92c9] text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                            <span class="truncate">Save</span>
+                            <span class="truncate">{{ $editing ? 'Save Changes' : 'Save' }}</span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</form>    
+</form>
+<script>
+    (function () {
+        var form = document.getElementById('vitals-form');
+        var saveButton = document.getElementById('vitals-save');
+
+        // Pressing Enter in a single-line field used to submit (save) the whole exam half-finished.
+        // Now Enter moves to the next field instead; only the Save button saves. Enter still adds new lines in text boxes.
+        form.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter' || event.target.tagName !== 'INPUT') {
+                return;
+            }
+            event.preventDefault();
+            var fields = Array.prototype.filter.call(form.elements, function (el) {
+                return (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && el.type !== 'hidden' && !el.disabled && !el.readOnly;
+            });
+            var next = fields[fields.indexOf(event.target) + 1];
+            if (next) {
+                next.focus();
+            }
+        });
+
+        // "Now" fills the IOP time from this computer's clock (local time, to the minute).
+        document.getElementById('iop-now').addEventListener('click', function () {
+            var now = new Date();
+            var pad = function (n) { return String(n).padStart(2, '0'); };
+            document.getElementById('iop_taken_at').value = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate())
+                + 'T' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+        });
+
+        // Lock the Save button after the first click so a double click can't save twice.
+        form.addEventListener('submit', function () {
+            saveButton.disabled = true;
+            saveButton.classList.add('opacity-60', 'cursor-not-allowed');
+            saveButton.querySelector('span').textContent = 'Saving…';
+        });
+
+        // If the browser restores this page from history (Back button), unlock the button again.
+        // The one-time form token still stops the same exam being saved a second time.
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                saveButton.disabled = false;
+                saveButton.classList.remove('opacity-60', 'cursor-not-allowed');
+                saveButton.querySelector('span').textContent = saveButton.dataset.label;
+            }
+        });
+    })();
+</script>    
 </body>
 
 </html>
