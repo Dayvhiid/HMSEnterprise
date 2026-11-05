@@ -8,6 +8,7 @@ use App\Models\Drug;
 use App\Models\Lens;
 use App\Models\Frame;
 use App\Models\Invoice;
+use App\Models\PatientInfo;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -56,8 +57,12 @@ class InvoiceController extends Controller
     public function newIndex(){
         return view('invoice.newinvoice');
     }
-    public function show(){
-        return view('inventory.generateinvoice');
+    public function show(Request $request){
+        // ?patient= (from the patient chart) or the value typed before a failed save.
+        $pid = trim((string) old('pid', $request->query('patient', '')));
+        $patient = $pid !== '' ? PatientInfo::where('patient_id', $pid)->first() : null;
+
+        return view('inventory.generateinvoice', compact('pid', 'patient'));
     }
 
 
@@ -222,15 +227,61 @@ class InvoiceController extends Controller
 //     return redirect('/invoice');
 // }
 
-    public function find(){
-        return view('invoice.search');
+    /**
+     * Find invoice: one searchable, paged list (/invoice/find and the old /invoice/search?query=).
+     * The search matches a receipt number (RCT-000042 or 42), what was typed as the patient (walk-in names,
+     * Patient IDs) and registered patients' names, so an invoice made by picking a patient is found by name too.
+     */
+    public function find(Request $request){
+        $query = trim((string) $request->query('query', ''));
+        $range = $this->invoiceRange($request);
+
+        $filtered = Invo::query()
+            ->when($query !== '', function ($q) use ($query) {
+                $patientIds = PatientInfo::query()->matching($query)->limit(200)->pluck('patient_id');
+                $receiptId = preg_match('/^(?:RCT-?)?0*(\d+)$/i', $query, $m) ? (int) $m[1] : null;
+
+                $q->where(function ($w) use ($query, $patientIds, $receiptId) {
+                    $w->where('pid', 'LIKE', "%{$query}%")
+                        ->when($patientIds->isNotEmpty(), fn ($x) => $x->orWhereIn('pid', $patientIds))
+                        ->when($receiptId, fn ($x) => $x->orWhere('id', $receiptId));
+                });
+            })
+            ->when($range['from'], fn ($q, $from) => $q->whereDate('created_at', '>=', $from))
+            ->when($range['to'], fn ($q, $to) => $q->whereDate('created_at', '<=', $to));
+
+        // Summary for everything matching (not just this page), with the same maths as the receipts and reports.
+        $all = (clone $filtered)->get(['id', 'name', 'price', 'qty', 'discount']);
+        $summary = [
+            'count' => $all->count(),
+            'net' => $all->sum(fn (Invo $i) => $i->totals()['net']),
+            'discount' => $all->sum(fn (Invo $i) => $i->totals()['discount']),
+        ];
+
+        $invoices = $filtered->orderByDesc('created_at')->orderByDesc('id')->paginate(25)->withQueryString();
+
+        // Registered patients on this page, so rows show a name and link to the chart.
+        $patients = PatientInfo::whereIn('patient_id', $invoices->pluck('pid')->filter()->unique())
+            ->get()->keyBy('patient_id');
+
+        return view('invoice.find', compact('invoices', 'patients', 'summary', 'query', 'range'));
     }
-    public function search(){
-        $search_text = (string) request()->query('query', '');
-        $users = Invo::where(function ($query) use ($search_text) {
-            $query->where('pid', 'LIKE', "%{$search_text}%");})
-        ->get();
-        return view('invoice.invoicesearch', compact('users'));
+
+    public function search(Request $request){
+        return $this->find($request);
+    }
+
+    /** Date filter: a preset (today, week, month) or a from/to pair of Y-m-d dates. */
+    private function invoiceRange(Request $request): array
+    {
+        $date = fn ($v) => is_string($v) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $v) ? $v : null;
+
+        return match ($request->query('period')) {
+            'today' => ['period' => 'today', 'from' => today()->toDateString(), 'to' => today()->toDateString()],
+            'week' => ['period' => 'week', 'from' => today()->subDays(6)->toDateString(), 'to' => today()->toDateString()],
+            'month' => ['period' => 'month', 'from' => today()->startOfMonth()->toDateString(), 'to' => today()->toDateString()],
+            default => ['period' => null, 'from' => $date($request->query('from')), 'to' => $date($request->query('to'))],
+        };
     }
 
 

@@ -63,3 +63,12 @@
 - Current phase: Phase 1 — Architecture spike.
 - Phase 0 complete 2026-10-23; see `docs/SYSTEM_INVENTORY.md`.
 - Do not skip Phase 1. The client delivery architecture must be proven before broad changes.
+
+## UI track — EMR redesign (ADR-005)
+Runs alongside the desktop phases. Each phase needs approval; Phase U4 changes the schema.
+- [x] **U1 — Shell (2026-11-05):** `<x-layouts.clinical>` six-zone layout, Tailwind built by Vite, universal search (`/search`, Ctrl+K or `/`), environment label in the top bar.
+- [ ] **U2 — Patient chart:** patient banner, chart nav and context panel on patient card, vitals, treatment, Rx and patient invoice screens. *Done 2026-11-05: overview, examinations history, treatment & Rx history, personal details. New-exam/edit-exam and new-treatment forms also done. Remaining: patient invoice.*
+- [ ] **U3 — Role home pages:** front desk arrivals, clinician waiting queue, optician dispensing list.
+- [ ] **U4 — Visit stages & safety (schema):** `visits` with stages, guarded stage transitions, allergies/alerts in the banner.
+- [ ] **U5 — Remaining screens:** inventory, lens/frame, admin, SMS; remove unrouted duplicate views.
+- **Exit:** every routed screen uses the clinical layout and loads no CDN assets.

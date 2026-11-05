@@ -49,11 +49,19 @@ test('patient card shows the check-in button and confirmation', function () {
     $patient = makePatient();
 
     $this->actingAs($user)
+        ->get(route('patient.show', $patient->id))
+        ->assertOk()
+        ->assertSee('Check In (Returning Patient)')
+        ->assertSee('Not checked in today');
+
+    // Once checked in, the button is replaced by the check-in time so nobody tries again.
+    $this->actingAs($user)
         ->followingRedirects()
         ->post(route('patient.checkin', $patient->id))
         ->assertOk()
-        ->assertSee('Check In (Returning Patient)')
-        ->assertSee('Patient checked in. The doctors have been notified.');
+        ->assertSee('Patient checked in. The doctors have been notified.')
+        ->assertSee('Checked in today')
+        ->assertDontSee('Check In (Returning Patient)');
 });
 
 test('a patient can only be checked in once per day', function () {

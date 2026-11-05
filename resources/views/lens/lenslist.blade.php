@@ -1,58 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <title>{{ config('clinic.product_name') }}</title>
-</head>
-<body>
-@include('partials.session-bar')
-    <div class="container">
-        {{-- <nav class="navbar navbar-light bg-light">
-            <form class="form-inline">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-        </nav> --}}
-        <form action="">
-            <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">SN</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">ID</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Edit</th>
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($lens as $len)
-                  <tr>
-                    {{-- <th scope="row">1</th> --}}
-                    <td> <input type="text" class="form-control" name="name" value="{{$len->id}}" readonly></td>
-                    <td> <input type="text" class="form-control" name="price" value="{{$len->name}}" readonly></td>
-                    <td> <input type="text" class="form-control" name="price" value="{{$len->price}}" readonly></td>
-                    <td> <input type="text" class="form-control" name="price" value="{{$len->special_code}}" readonly></td>
-                    <td> <input type="text" class="form-control" name="quantity" value="{{$len->quantity}}" readonly></td>
-                    <td> <a href="{{route('lens.edit', ['len' => $len])}}">Edit</a></td>
-                    <td>
-                      <form action="{{route('lens.delete', ['len' => $len ])}}" method="POST">
-                        @csrf
-                        @method('delete')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                      </form>
-                    </td>
-                  </tr>
-                  @endforeach
-                  {{ $lens->links('pagination::bootstrap-4') }}
-              </table>
-        </form>
+{{-- Stock: lens list, searchable and paged, with edit and delete. Clinical layout (ADR-005). --}}
+<x-layouts.clinical title="Lens list">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Lenses</h1>
+            <p class="text-sm text-slate-600">Lenses in stock, A–Z. Search by name or code.</p>
+        </div>
+        <a href="{{ route('admin2.lens') }}" class="btn-primary">+ Add lenses</a>
     </div>
-</body>
-</html>
+
+    <x-clinical.tabs label="Lenses" :tabs="['Add lenses' => 'admin2.lens', 'Lens list' => 'lens.list']" />
+
+    <form method="GET" action="{{ route('lens.list') }}" role="search" class="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+        <label for="lens-query" class="sr-only">Search lenses</label>
+        <input id="lens-query" name="query" type="search" value="{{ $query }}" autofocus placeholder="Lens name or code" class="field-input max-w-md flex-1">
+        <button type="submit" class="btn-secondary">Search</button>
+        @if ($query !== '')
+            <a href="{{ route('lens.list') }}" class="text-sm font-medium text-sky-700 hover:underline">Clear</a>
+        @endif
+    </form>
+
+    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        @if ($lens->isEmpty())
+            <div class="px-6 py-12 text-center">
+                <p class="text-sm font-medium text-slate-900">{{ $query !== '' ? 'No lenses match “'.$query.'”.' : 'No lenses in stock yet.' }}</p>
+                <p class="mt-1 text-sm text-slate-600"><a href="{{ route('admin2.lens') }}" class="font-medium text-sky-700 hover:underline">Add lenses</a></p>
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm">
+                    <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                        <tr>
+                            <th scope="col" class="px-4 py-2.5">Lens name</th>
+                            <th scope="col" class="px-4 py-2.5">Code</th>
+                            <th scope="col" class="px-4 py-2.5 text-right">Price</th>
+                            <th scope="col" class="px-4 py-2.5 text-right">Quantity</th>
+                            <th scope="col" class="px-4 py-2.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        @foreach ($lens as $len)
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-2.5 font-medium text-slate-900">{{ $len->name }}</td>
+                                <td class="whitespace-nowrap px-4 py-2.5 font-mono text-xs">{{ filled($len->special_code) ? $len->special_code : '-' }}</td>
+                                <td class="whitespace-nowrap px-4 py-2.5 text-right tabular-nums">{{ is_numeric($len->price) ? number_format((float) $len->price, 2) : $len->price }}</td>
+                                <td class="whitespace-nowrap px-4 py-2.5 text-right tabular-nums">
+                                    @if (is_numeric($len->quantity) && (int) $len->quantity <= 0)
+                                        <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">Out of stock</span>
+                                    @else
+                                        {{ filled($len->quantity) ? $len->quantity : '-' }}
+                                    @endif
+                                </td>
+                                <td class="whitespace-nowrap px-4 py-2.5">
+                                    <div class="flex items-center justify-end gap-3">
+                                        <a href="{{ route('lens.edit', ['len' => $len]) }}" class="font-medium text-sky-700 hover:underline">Edit</a>
+                                        <form method="POST" action="{{ route('lens.delete', ['len' => $len]) }}"
+                                              onsubmit="return confirm({{ \Illuminate\Support\Js::from('Delete '.$len->name.' from the lens list? This cannot be undone.') }});">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-sm font-medium text-red-700 hover:underline">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <x-clinical.pager :paginator="$lens" noun="lens" />
+        @endif
+    </div>
+</x-layouts.clinical>

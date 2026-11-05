@@ -7,6 +7,7 @@ use App\Models\Doctor;
 use App\Models\Vital;
 use Illuminate\Http\Request;
 use App\Models\Notification;
+use App\Support\PatientChart;
 
 class DoctorsController extends Controller
 {
@@ -84,9 +85,14 @@ class DoctorsController extends Controller
 
     
 
-    public function vitals(){
-    //    return view('doctors.vital');
-       return view('doctors.newVitals');
+    public function vitals(Request $request){
+        // ?patient= comes from the chart's "Record examination" link; after a failed save the typed ID wins.
+        $patientCode = trim((string) old('patient_code', $request->query('patient', '')));
+
+        return view('doctors.newVitals', [
+            'patientCode' => $patientCode,
+            'chart' => PatientChart::forPatientId($patientCode),
+        ]);
     }
 
     public function vitalSave(){

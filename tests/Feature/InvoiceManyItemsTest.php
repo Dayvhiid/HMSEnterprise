@@ -67,5 +67,6 @@ test('a bad row shows which row failed and keeps every row the user typed', func
         ->assertSee('name="inputs[5][name]"', false)
         ->assertSee('value="Item 5 (Lens)"', false)
         ->assertSee('value="15,000"', false)
-        ->assertSee('var rowCounter = 5;', false);
+        // New rows are numbered after the six restored ones.
+        ->assertSee('var nextIndex = 6;', false);
 });

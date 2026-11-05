@@ -18,6 +18,15 @@ return [
     // Sender ID used for SMS when the SMS account does not set one (max 11 characters).
     'sms_sender' => env('CLINIC_SMS_SENDER', 'ClearSight'),
 
+    // Shown in the top bar so a demo or training copy can never be mistaken for the live system.
+    // Leave CLINIC_ENVIRONMENT_LABEL empty to derive it from APP_ENV ("production" counts as live).
+    'environment' => [
+        'is_live' => env('APP_ENV', 'production') === 'production',
+        'label' => env('CLINIC_ENVIRONMENT_LABEL') ?: (env('APP_ENV', 'production') === 'production'
+            ? 'LIVE'
+            : strtoupper((string) env('APP_ENV')).' - not live patient data'),
+    ],
+
     // Modules that are not finished yet stay hidden unless switched on.
     'features' => [
         'telemedicine' => (bool) env('CLINIC_FEATURE_TELEMEDICINE', false),

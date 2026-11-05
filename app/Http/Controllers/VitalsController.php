@@ -7,6 +7,7 @@ use App\Models\Treat;
 use Illuminate\Http\Request;
 use App\Models\Vital;
 use App\Models\vital2;
+use App\Support\PatientChart;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -200,7 +201,11 @@ class VitalsController extends Controller
         }
     }
 
-    return view('doctors.newVitals', compact('vital', 'prefill'));
+    return view('doctors.newVitals', [
+        'vital' => $vital,
+        'prefill' => $prefill,
+        'chart' => PatientChart::forPatientId($vital->patient_code),
+    ]);
 }
 
     public function update(Request $request, Vital $vital)
@@ -238,7 +243,7 @@ class VitalsController extends Controller
     public function search(){
         $search_text = (string) request()->query('query', '');
         $treatments = Treat::where('patient_id', $search_text)
-        ->get();
+            ->orderByDesc('created_at')->orderByDesc('id')->get();
 
         $examinations = Vital::where('patient_code', $search_text)->orderByDesc('created_at')->orderByDesc('id')->get()
             ->map(fn ($vital) => [
@@ -247,7 +252,12 @@ class VitalsController extends Controller
             ]);
 
         // return view('doctors.treatmentresult', compact('users'));
-         return view('doctors.newtreatmentresult', compact('treatments', 'examinations'));
+        return view('doctors.newtreatmentresult', [
+            'treatments' => $treatments,
+            'examinations' => $examinations,
+            'patientId' => $search_text,
+            'chart' => PatientChart::forPatientId($search_text),
+        ]);
     }
     public function display(){
         return view('doctors.searchvitals');
@@ -271,7 +281,11 @@ class VitalsController extends Controller
             ->map(fn ($vital) => ['vital' => $vital, 'vital2' => $vital->pairedVital2()]);
 
         // return view('doctors.vitalsresult', compact('combinedResults'));
-        return view('doctors.vitalsresultTwo', ['visits' => $visits, 'patientCode' => $search_text]);
+        return view('doctors.vitalsresultTwo', [
+            'visits' => $visits,
+            'patientCode' => $search_text,
+            'chart' => PatientChart::forPatientId($search_text),
+        ]);
     }
 
     // public function vitals() {

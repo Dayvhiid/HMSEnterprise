@@ -1,289 +1,110 @@
-<html>
+{{-- Patient chart: treatment plans & Rx, then the exam sections taken at each visit.
+     Six-zone clinical layout (ADR-005). $chart is null when no registered patient has this ID. --}}
+@php
+    $medicationFields = ['dosage' => 'Dosage', 'duration' => 'Duration', 'tab' => 'Tab', 'gutt' => 'Gutt', 'oc' => 'OC', 'sur' => 'Sur', 'rtc' => 'RTC'];
+    $lensFields = ['single_vision' => 'Single vision', 'bifocal' => 'Bifocal', 'progressive' => 'Progressive', 'invisible' => 'Invisible', 'special_order' => 'Special order'];
+    $lensChoices = function ($treatment, string $field): ?string {
+        $decoded = json_decode((string) $treatment->$field);
 
-<head>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
-        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" />
-
-    <title>Treatment Records</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-</head>
-
-<body>
-@include('partials.session-bar')
-@foreach (['success' => ['#e8f6ee', '#14532d'], 'info' => ['#fff7e0', '#7a4b00']] as $flashKey => [$flashBg, $flashFg])
-    @if (session($flashKey))
-        <div role="status" style="max-width:960px;margin:12px auto;padding:10px 16px;border-radius:8px;background:{{ $flashBg }};color:{{ $flashFg }};font:14px/1.4 system-ui,sans-serif;">{{ session($flashKey) }}</div>
+        return $decoded ? implode(', ', (array) $decoded) : null;
+    };
+@endphp
+<x-layouts.clinical :title="'Treatment & Rx'.($chart ? ' - '.$chart->name() : '')">
+    @if ($chart)
+        <x-slot:banner><x-clinical.patient-banner :chart="$chart" /></x-slot:banner>
+        <x-slot:nav><x-clinical.chart-nav :chart="$chart" active="treatment" /></x-slot:nav>
+        <x-slot:context><x-clinical.patient-context :chart="$chart" /></x-slot:context>
     @endif
-@endforeach
-    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
-        style='font-family: Manrope, "Noto Sans", sans-serif;'>
-        <div class="layout-container flex h-full grow flex-col">
-            <header
-                class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f1f2f4] px-10 py-3">
-                <div class="flex items-center gap-4 text-[#121417]">
-                    <div class="size-4">
-                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g clip-path="url(#clip0_6_543)">
-                                <path
-                                    d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z"
-                                    fill="currentColor"></path>
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M7.24189 26.4066C7.31369 26.4411 7.64204 26.5637 8.52504 26.3738C9.59462 26.1438 11.0343 25.5311 12.7183 24.4963C14.7583 23.2426 17.0256 21.4503 19.238 19.238C21.4503 17.0256 23.2426 14.7583 24.4963 12.7183C25.5311 11.0343 26.1438 9.59463 26.3738 8.52504C26.5637 7.64204 26.4411 7.31369 26.4066 7.24189C26.345 7.21246 26.143 7.14535 25.6664 7.1918C24.9745 7.25925 23.9954 7.5498 22.7699 8.14278C20.3369 9.32007 17.3369 11.4915 14.4142 14.4142C11.4915 17.3369 9.32007 20.3369 8.14278 22.7699C7.5498 23.9954 7.25925 24.9745 7.1918 25.6664C7.14534 26.143 7.21246 26.345 7.24189 26.4066ZM29.9001 10.7285C29.4519 12.0322 28.7617 13.4172 27.9042 14.8126C26.465 17.1544 24.4686 19.6641 22.0664 22.0664C19.6641 24.4686 17.1544 26.465 14.8126 27.9042C13.4172 28.7617 12.0322 29.4519 10.7285 29.9001L21.5754 40.747C21.6001 40.7606 21.8995 40.931 22.8729 40.7217C23.9424 40.4916 25.3821 39.879 27.0661 38.8441C29.1062 37.5904 31.3734 35.7982 33.5858 33.5858C35.7982 31.3734 37.5904 29.1062 38.8441 27.0661C39.879 25.3821 40.4916 23.9425 40.7216 22.8729C40.931 21.8995 40.7606 21.6001 40.747 21.5754L29.9001 10.7285ZM29.2403 4.41187L43.5881 18.7597C44.9757 20.1473 44.9743 22.1235 44.6322 23.7139C44.2714 25.3919 43.4158 27.2666 42.252 29.1604C40.8128 31.5022 38.8165 34.012 36.4142 36.4142C34.012 38.8165 31.5022 40.8128 29.1604 42.252C27.2666 43.4158 25.3919 44.2714 23.7139 44.6322C22.1235 44.9743 20.1473 44.9757 18.7597 43.5881L4.41187 29.2403C3.29027 28.1187 3.08209 26.5973 3.21067 25.2783C3.34099 23.9415 3.8369 22.4852 4.54214 21.0277C5.96129 18.0948 8.43335 14.7382 11.5858 11.5858C14.7382 8.43335 18.0948 5.9613 21.0277 4.54214C22.4852 3.8369 23.9415 3.34099 25.2783 3.21067C26.5973 3.08209 28.1187 3.29028 29.2403 4.41187Z"
-                                    fill="currentColor"></path>
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_6_543">
-                                    <rect width="48" height="48" fill="white"></rect>
-                                </clipPath>
-                            </defs>
-                        </svg>
-                    </div>
-                    <h2 class="text-[#121417] text-lg font-bold leading-tight tracking-[-0.015em]">MediCall</h2>
+
+    <div>
+        <h1 class="text-xl font-semibold text-slate-900">Treatment &amp; Rx</h1>
+        <p class="text-sm text-slate-600">
+            Patient {{ $patientId }}: {{ $treatments->count() }} treatment {{ \Illuminate\Support\Str::plural('plan', $treatments->count()) }}, newest first
+        </p>
+    </div>
+
+    @unless ($chart)
+        <div role="status" class="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            No registered patient has the ID {{ $patientId }}. Use the search bar to find the right patient.
+        </div>
+    @endunless
+
+    @forelse ($treatments as $treatment)
+        @php $lenses = collect($lensFields)->map(fn ($label, $field) => $lensChoices($treatment, $field))->filter(); @endphp
+        <x-clinical.panel :title="\Carbon\Carbon::parse($treatment->created_at)->format('F j, Y g:i A')">
+            @if ($loop->first)
+                <x-slot:headerActions><span class="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800">Latest</span></x-slot:headerActions>
+            @endif
+
+            <div class="grid gap-4 lg:grid-cols-2">
+                <div>
+                    <h3 class="mb-1 text-sm font-semibold text-slate-800">Prescription</h3>
+                    <p class="whitespace-pre-line rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900">{{ filled(trim((string) $treatment->prescription)) ? trim($treatment->prescription) : 'None recorded' }}</p>
                 </div>
-                {{-- <div class="flex flex-1 justify-end gap-8">
-                    <div class="flex items-center gap-9">
-                        <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Dashboard</a>
-                        <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Appointments</a>
-                        <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Patients</a>
-                        <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Billing</a>
-                        <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Analytics</a>
-                        <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Settings</a>
-                    </div>
-                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBIAoxeott-h8_UyJVTszUdurjuVUE3SgXVtPipZyVfP_JY_fqRfgtAlTr7Yu1D_hX0x3hMvXJrV5hB8FJbCOqjhMIEUkEAAx7vayL6FpcUzhR_T97dMg458oXOyUUy8QKn0kUtUg-CdfJifGUoiWGc9IMO-idYecayhlEY6duWR1r9xotdDd-SEheflmMRZ5XZCWgn5I-9wwv0Ii57UMxvjtnZf1NZjF9arOBzepwBfgfGvAg76tGgOVQmAklS9SNzCgrpM5v1EZ4");'>
-                    </div>
-                </div> --}}
-            </header>
-            <div class="px-6 flex flex-1 justify-center py-5">
-                <div class="layout-content-container flex flex-col w-full flex-1">
-                    <div class="flex flex-wrap justify-between gap-3 p-4">
-                        <div class="flex min-w-72 flex-col gap-3">
-                            <p class="text-[#121417] tracking-light text-[32px] font-bold leading-tight">Patient History
-                            </p>
-                            <p class="text-[#677583] text-sm font-normal leading-normal">Ophthalmology records for
-                                patient</p>
-                        </div>
-                    </div>
-                    <div class="px-4 py-3 @container">
-                        <div class="flex overflow-x-auto rounded-xl border border-[#dde0e4] bg-white">
-                            <table class="flex-1">
-                                <thead>
-                                    <tr class="bg-white">
-                                      <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] min-w-[170px] text-sm font-medium leading-normal">
-                                            Date
-                                        </th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            Patient ID
-                                        </th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            Dosage</th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            Duration
-                                        </th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            Tab</th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            Gutt</th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            OC</th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            Sur</th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 px-4 py-3 text-left text-[#121417] text-sm font-medium leading-normal">
-                                            RTC</th>
-                                        <th
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 px-4 py-3 text-left text-[#121417] min-w-[260px] text-sm font-medium leading-normal">
-                                            Remark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-
-                                    @foreach ($treatments as $treatment)
-                                        <tr class="border-t border-t-[#dde0e4]">
-                                          <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal"> {{ \Carbon\Carbon::parse($treatment->created_at)->format('F j, Y g:i A') }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->patient_id }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->dosage }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->duration }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->tab }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->gutt }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->oc }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->sur }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                {{ $treatment->rtc }} </td>
-                                            <td
-                                                class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 h-[72px] px-4 py-2 text-[#677583] text-sm font-normal leading-normal">
-                                                <span class="whitespace-pre-line">{{ $treatment->remark }}</span> </td>
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    {{-- Examinations taken at each vitals visit --}}
-                    <p class="text-[#121417] tracking-light text-[20px] font-bold leading-tight mt-[40px] px-4">Examinations Taken</p>
-                    <div class="px-4 pt-[10px] flex flex-col gap-4">
-                        @forelse ($examinations as $exam)
-                            <div class="rounded-xl border border-[#dde0e4] bg-white p-4">
-                                <p class="text-[#121417] text-sm font-medium leading-normal pb-3">
-                                    {{ \Carbon\Carbon::parse($exam['date'])->format('F j, Y g:i A') }}
-                                </p>
-                                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5">
-                                    @foreach ($exam['sections'] as $section => $taken)
-                                        @if ($taken)
-                                            <div class="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
-                                                <span aria-hidden="true" class="font-bold">✓</span>
-                                                <span>{{ $section }}</span>
-                                                <span class="sr-only">(taken)</span>
-                                            </div>
-                                        @else
-                                            <div class="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm text-[#677583]">
-                                                <span aria-hidden="true">–</span>
-                                                <span>{{ $section }}</span>
-                                                <span class="sr-only">(not taken)</span>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                        @empty
-                            <p class="text-[#677583] text-sm font-normal leading-normal">No examinations recorded for this patient.</p>
-                        @endforelse
-                    </div>
-                    {{-- Second Table --}}
-                     <p class="text-[#121417] tracking-light text-[20px] font-bold leading-tight mt-[40px]">Lens Type</p>
-                    <div class="flex overflow-hidden rounded-xl border border-[#dde0e4] bg-white mt-[10px]">
-                        <table class="flex-1">
-                            <thead>
-                                <tr class="bg-white">
-                                    <th
-                                        class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
-                                        Single Vision
-                                    </th>
-                                    <th
-                                        class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-240 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
-                                        Bifocal</th>
-                                    <th
-                                        class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-360 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
-                                        Special Order
-                                    </th>
-                                    <th
-                                        class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-480 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
-                                        Invisible </th>
-                                    <th
-                                        class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
-                                        Progressive</th>
-                                       <th
-                                        class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">
-                                        Date</th>   
-                                    {{-- <th class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">OC</th>
-                      <th class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">Sur</th>
-                      <th class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">RTC</th>
-                      <th class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-1080 px-4 py-3 text-left text-[#121417] w-[400px] text-sm font-medium leading-normal">Remark</th> --}}
-                                </tr>
-                            </thead>
-                            <tbody>
-
-
-                                @foreach ($treatments as $treatment)
-                                    <tr class="border-t border-t-[#dde0e4]">
-                                        <td
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
-                                            @php $vision = json_decode($treatment->single_vision); @endphp
-                                            @if ($vision)
-                                                {{ implode(', ', (array) $vision) }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-
-                                         <td
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
-                                            @php $vision = json_decode($treatment->bifocal); @endphp
-                                            @if ($vision)
-                                                {{ implode(', ', (array) $vision) }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-                                        <td
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
-                                            @php $vision = json_decode($treatment->special_order); @endphp
-                                            @if ($vision)
-                                                {{ implode(', ', (array) $vision) }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-                                         <td
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
-                                            @php $vision = json_decode($treatment->invisible); @endphp
-                                            @if ($vision)
-                                                {{ implode(', ', (array) $vision) }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-                                         <td
-                                            class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-120 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal">
-                                            @php $vision = json_decode($treatment->progressive); @endphp
-                                            @if ($vision)
-                                                {{ implode(', ', (array) $vision) }}
-                                            @else
-                                                N/A
-                                            @endif
-                                        </td>
-                                         <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal"> {{ \Carbon\Carbon::parse($treatment->created_at)->format('F j, Y g:i A') }} </td>
-
-                                        {{-- <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-600 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal"> {{ $treatment->gutt }} </td>
-                      <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-720 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal"> {{ $treatment->oc }} </td>
-                      <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-840 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal"> {{ $treatment->sur }} </td>
-                      <td class="table-01f350db-fc4a-45fd-98af-7eb5564daaf5-column-960 h-[72px] px-4 py-2 w-[400px] text-[#677583] text-sm font-normal leading-normal"> {{ $treatment->rtc }} </td> --}}
-                                    </tr>
-                                    <tr>
-                                        <td colspan="6" class="px-4 pb-4">
-                                            <div class="rounded-lg border border-[#dde0e4] bg-[#f8f9fa] p-4">
-                                                <p class="text-[#121417] text-sm font-medium leading-normal pb-2">Prescription</p>
-                                                <p class="text-[#677583] text-sm font-normal leading-normal whitespace-pre-line">{{ trim($treatment->prescription ?? '') !== '' ? trim($treatment->prescription) : 'N/A' }}</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
-                        </table>
-                    </div>
+                <div>
+                    <h3 class="mb-1 text-sm font-semibold text-slate-800">Lens type</h3>
+                    @if ($lenses->isEmpty())
+                        <p class="text-sm text-slate-600">None recorded</p>
+                    @else
+                        <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                            @foreach ($lenses as $field => $choices)
+                                <dt class="text-slate-500">{{ $lensFields[$field] }}</dt>
+                                <dd class="text-slate-900">{{ $choices }}</dd>
+                            @endforeach
+                        </dl>
+                    @endif
                 </div>
             </div>
-        </div>
-    </div>
-</body>
 
-</html>
+            <dl class="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 border-t border-slate-100 pt-4 text-sm sm:grid-cols-4 xl:grid-cols-7">
+                @foreach ($medicationFields as $field => $label)
+                    <div>
+                        <dt class="text-slate-500">{{ $label }}</dt>
+                        <dd class="whitespace-pre-line text-slate-900">{{ filled($treatment->$field) ? $treatment->$field : '-' }}</dd>
+                    </div>
+                @endforeach
+            </dl>
+
+            <div class="mt-4 border-t border-slate-100 pt-4 text-sm">
+                <p class="text-slate-500">Remark</p>
+                <p class="whitespace-pre-line text-slate-900">{{ filled($treatment->remark) ? $treatment->remark : '-' }}</p>
+            </div>
+        </x-clinical.panel>
+    @empty
+        <x-clinical.panel>
+            <p class="text-sm text-slate-600">No treatment plans recorded for this patient.</p>
+        </x-clinical.panel>
+    @endforelse
+
+    <x-clinical.panel title="Examinations Taken" id="examinations">
+        <div class="space-y-4">
+            @forelse ($examinations as $exam)
+                <div>
+                    <p class="pb-2 text-sm font-medium text-slate-900">{{ \Carbon\Carbon::parse($exam['date'])->format('F j, Y g:i A') }}</p>
+                    <ul class="flex flex-wrap gap-2">
+                        @foreach ($exam['sections'] as $section => $taken)
+                            <li @class([
+                                'flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium',
+                                'bg-green-100 text-green-800' => $taken,
+                                'bg-slate-100 text-slate-500' => ! $taken,
+                            ])>
+                                <span aria-hidden="true">{{ $taken ? '✓' : '–' }}</span>
+                                <span>{{ $section }}</span>
+                                <span class="sr-only">{{ $taken ? '(taken)' : '(not taken)' }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @empty
+                <p class="text-sm text-slate-600">No examinations recorded for this patient.</p>
+            @endforelse
+        </div>
+    </x-clinical.panel>
+
+    <x-slot:actions>
+        @if ($chart)
+            <a href="{{ route('patient.show', $chart->patient->id) }}" class="btn-secondary">Back to overview</a>
+        @endif
+        <a href="{{ route('doctors.treatment', ['patient' => $patientId]) }}" class="btn-primary">New treatment plan</a>
+    </x-slot:actions>
+</x-layouts.clinical>

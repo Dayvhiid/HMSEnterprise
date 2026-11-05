@@ -3,14 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Treat;
+use App\Support\PatientChart;
 
 use Illuminate\Http\Request;
 
 class TreatmentController extends Controller
 {
-    public function index(){
-        // return view('doctors.treatment');
-        return view('doctors.newIndex');
+    public function index(Request $request){
+        // ?patient= comes from the chart's "New treatment plan" link; after a failed save the typed ID wins.
+        $patientCode = trim((string) old('patient_id', $request->query('patient', '')));
+
+        return view('doctors.newIndex', [
+            'patientCode' => $patientCode,
+            'chart' => PatientChart::forPatientId($patientCode),
+        ]);
     }
     public function index2(){
         return view('doctors.treatment2');

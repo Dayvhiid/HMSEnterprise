@@ -42,6 +42,7 @@ use App\Http\Controllers\OpticianController;
 use App\Http\Controllers\PatientCardController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\TeleMedController;
+use App\Http\Controllers\GlobalSearchController;
 
 Route::get('/Bookings', [NewValidationController::class, 'booking'])->name('NewBooking');
 
@@ -104,6 +105,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/records', [RecordsController::class, 'index'])->name('public.records');
     Route::get('/records/search', [RecordsController::class, 'search'])->name('records.search');
+
+    // Universal search (top bar): patients by name, ID or phone, and screens by name.
+    Route::get('/search', GlobalSearchController::class)->middleware('throttle:120,1')->name('search.global');
 
     //invoice
     Route::post('/invoices/store', [InvoiceController::class, 'store'])->name('invoices.store');

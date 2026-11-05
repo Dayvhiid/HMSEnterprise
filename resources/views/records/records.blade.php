@@ -1,116 +1,163 @@
-{{-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <title>{{ config('clinic.product_name') }}</title>
-</head>
-<body>
-    <div class="container">
-        <h3>Search Patients Record</h3>
-        <form action="{{route('records.search')}}" type="get">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        <form>        
-    </div>
-</body>
-</html> --}}
-
- <html>
-  <head>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link
-      rel="stylesheet"
-      as="style"
-      onload="this.rel='stylesheet'"
-      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
-    />
-
-    <title>Pateint Information</title>
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  </head>
-  <body>
-@include('partials.session-bar')
-       <form action="{{route('records.search')}}" type="get">
-    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
-      <div class="layout-container flex h-full grow flex-col">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f2f2f2] px-10 py-3">
-          <div class="flex items-center gap-4 text-[#141414]">
-            <div class="size-4">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_6_543)">
-                  <path
-                    d="M42.1739 20.1739L27.8261 5.82609C29.1366 7.13663 28.3989 10.1876 26.2002 13.7654C24.8538 15.9564 22.9595 18.3449 20.6522 20.6522C18.3449 22.9595 15.9564 24.8538 13.7654 26.2002C10.1876 28.3989 7.13663 29.1366 5.82609 27.8261L20.1739 42.1739C21.4845 43.4845 24.5355 42.7467 28.1133 40.548C30.3042 39.2016 32.6927 37.3073 35 35C37.3073 32.6927 39.2016 30.3042 40.548 28.1133C42.7467 24.5355 43.4845 21.4845 42.1739 20.1739Z"
-                    fill="currentColor"
-                  ></path>
-                  <path
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M7.24189 26.4066C7.31369 26.4411 7.64204 26.5637 8.52504 26.3738C9.59462 26.1438 11.0343 25.5311 12.7183 24.4963C14.7583 23.2426 17.0256 21.4503 19.238 19.238C21.4503 17.0256 23.2426 14.7583 24.4963 12.7183C25.5311 11.0343 26.1438 9.59463 26.3738 8.52504C26.5637 7.64204 26.4411 7.31369 26.4066 7.24189C26.345 7.21246 26.143 7.14535 25.6664 7.1918C24.9745 7.25925 23.9954 7.5498 22.7699 8.14278C20.3369 9.32007 17.3369 11.4915 14.4142 14.4142C11.4915 17.3369 9.32007 20.3369 8.14278 22.7699C7.5498 23.9954 7.25925 24.9745 7.1918 25.6664C7.14534 26.143 7.21246 26.345 7.24189 26.4066ZM29.9001 10.7285C29.4519 12.0322 28.7617 13.4172 27.9042 14.8126C26.465 17.1544 24.4686 19.6641 22.0664 22.0664C19.6641 24.4686 17.1544 26.465 14.8126 27.9042C13.4172 28.7617 12.0322 29.4519 10.7285 29.9001L21.5754 40.747C21.6001 40.7606 21.8995 40.931 22.8729 40.7217C23.9424 40.4916 25.3821 39.879 27.0661 38.8441C29.1062 37.5904 31.3734 35.7982 33.5858 33.5858C35.7982 31.3734 37.5904 29.1062 38.8441 27.0661C39.879 25.3821 40.4916 23.9425 40.7216 22.8729C40.931 21.8995 40.7606 21.6001 40.747 21.5754L29.9001 10.7285ZM29.2403 4.41187L43.5881 18.7597C44.9757 20.1473 44.9743 22.1235 44.6322 23.7139C44.2714 25.3919 43.4158 27.2666 42.252 29.1604C40.8128 31.5022 38.8165 34.012 36.4142 36.4142C34.012 38.8165 31.5022 40.8128 29.1604 42.252C27.2666 43.4158 25.3919 44.2714 23.7139 44.6322C22.1235 44.9743 20.1473 44.9757 18.7597 43.5881L4.41187 29.2403C3.29027 28.1187 3.08209 26.5973 3.21067 25.2783C3.34099 23.9415 3.8369 22.4852 4.54214 21.0277C5.96129 18.0948 8.43335 14.7382 11.5858 11.5858C14.7382 8.43335 18.0948 5.9613 21.0277 4.54214C22.4852 3.8369 23.9415 3.34099 25.2783 3.21067C26.5973 3.08209 28.1187 3.29028 29.2403 4.41187Z"
-                    fill="currentColor"
-                  ></path>
-                </g>
-                <defs>
-                  <clipPath id="clip0_6_543"><rect width="48" height="48" fill="white"></rect></clipPath>
-                </defs>
-              </svg>
-            </div>
-            <h2 class="text-[#141414] text-lg font-bold leading-tight tracking-[-0.015em]">Search Patients</h2>
-          </div>
-          <div class="flex flex-1 justify-end gap-8">
-            <div class="flex items-center gap-9">
-              <a class="text-[#141414] text-sm font-medium leading-normal" href="#">Home</a>
-              <a class="text-[#141414] text-sm font-medium leading-normal" href="#">About</a>
-              <a class="text-[#141414] text-sm font-medium leading-normal" href="#">Contact</a>
-            </div>
-          
-          </div>
-        </header>
-        <div class="px-40 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-            <div class="px-4 py-3">
-              <label class="flex flex-col min-w-40 h-12 w-full">
-                <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
-                  <div
-                    class="text-[#757575] flex border-none bg-[#f2f2f2] items-center justify-center pl-4 rounded-l-lg border-r-0"
-                    data-icon="MagnifyingGlass"
-                    data-size="24px"
-                    data-weight="regular"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path
-                        d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
-                      ></path>
-                    </svg>
-                  </div>
-                 
-                  <input
-                    name="query"
-                    type="search"
-                    placeholder="Search"
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#141414] focus:outline-0 focus:ring-0 border-none bg-[#f2f2f2] focus:border-none h-full placeholder:text-[#757575] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                    value=""
-                  />
-                </div>
-              </label>
-            </div>
-            <div class="flex px-4 py-3 justify-center">
-              <button
-                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#141414] text-white text-sm font-bold leading-normal tracking-[0.015em]"
-              >
-                <span class="truncate">Search</span>
-              </button>
-            </div>
-          </div>
+{{-- Patients list. Clinical layout (ADR-005). Filters are a GET form, so every view is a shareable URL;
+     typing filters the table in place (debounced), Enter does the same without JavaScript. --}}
+<x-layouts.clinical title="Patients">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Patients</h1>
+            <p class="text-sm text-slate-600">Find a patient by name, ID or phone, then open their chart.</p>
         </div>
-      </div>
+        <a href="{{ route('pages.register') }}" class="btn-primary">+ Register new patient</a>
     </div>
-</form>
-  </body>
-</html>
+
+    <form id="records-filters" method="GET" action="{{ route('public.records') }}" role="search"
+          class="flex flex-wrap items-end gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+        <div class="min-w-[16rem] flex-1">
+            <label for="records-query" class="sr-only">Search patients</label>
+            <div class="relative">
+                <svg aria-hidden="true" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 3.47 9.77l3.63 3.63a.75.75 0 1 0 1.06-1.06l-3.63-3.63A5.5 5.5 0 0 0 9 3.5ZM5 9a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd"/></svg>
+                <input id="records-query" name="query" type="search" value="{{ $filters['query'] }}" autocomplete="off" autofocus
+                       placeholder="Name, patient ID or phone" class="field-input pl-9">
+            </div>
+        </div>
+        <div>
+            <label for="records-sex" class="field-label text-xs">Sex</label>
+            <select id="records-sex" name="sex" class="field-input">
+                <option value="">All</option>
+                <option value="female" @selected($filters['sex'] === 'female')>Female</option>
+                <option value="male" @selected($filters['sex'] === 'male')>Male</option>
+            </select>
+        </div>
+        <div>
+            <label for="records-from" class="field-label text-xs">Registered from</label>
+            <input id="records-from" name="from" type="date" value="{{ $filters['from'] }}" class="field-input">
+        </div>
+        <div>
+            <label for="records-to" class="field-label text-xs">to</label>
+            <input id="records-to" name="to" type="date" value="{{ $filters['to'] }}" class="field-input">
+        </div>
+        <div>
+            <label for="records-sort" class="field-label text-xs">Sort</label>
+            <select id="records-sort" name="sort" class="field-input">
+                @foreach ($sorts as $value => $label)
+                    <option value="{{ $value }}" @selected($filters['sort'] === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <label class="flex h-[38px] items-center gap-2 text-sm text-slate-700">
+            <input type="checkbox" name="checked_in" value="1" @checked($filters['checked_in']) class="rounded border-slate-300 text-sky-700 focus:ring-sky-600">
+            Checked in today
+        </label>
+        <a href="{{ route('public.records') }}" class="flex h-[38px] items-center text-sm font-medium text-sky-700 hover:underline">Reset</a>
+        <noscript><button type="submit" class="btn-secondary">Apply</button></noscript>
+    </form>
+
+    <div id="records-results" aria-live="polite" class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        @if ($patients->isEmpty())
+            <div class="px-6 py-12 text-center">
+                <p class="text-sm font-medium text-slate-900">
+                    {{ $filtered ? 'No patients match these filters.' : 'No patients registered yet.' }}
+                </p>
+                <p class="mt-1 text-sm text-slate-600">
+                    @if ($filtered)
+                        Check the spelling, try part of the name or phone, or <a href="{{ route('public.records') }}" class="font-medium text-sky-700 hover:underline">clear the filters</a>.
+                    @endif
+                    If the patient is new, <a href="{{ route('pages.register') }}" class="font-medium text-sky-700 hover:underline">register them</a>.
+                </p>
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm">
+                    <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                        <tr>
+                            <th scope="col" class="px-4 py-2.5">Patient</th>
+                            <th scope="col" class="px-4 py-2.5">Patient ID</th>
+                            <th scope="col" class="px-4 py-2.5">DOB / Age</th>
+                            <th scope="col" class="px-4 py-2.5">Sex</th>
+                            <th scope="col" class="px-4 py-2.5">Phone</th>
+                            <th scope="col" class="px-4 py-2.5">Last exam</th>
+                            <th scope="col" class="px-4 py-2.5">Today</th>
+                            <th scope="col" class="px-4 py-2.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        @foreach ($patients as $patient)
+                            @php
+                                $chart = \App\Support\PatientChart::for($patient);
+                                $name = $patient->displayName();
+                                $initials = collect(preg_split('/\s+/', $name, -1, PREG_SPLIT_NO_EMPTY))->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode('');
+                                $dob = $chart->dateOfBirth();
+                                $isCheckedIn = isset($checkedInToday[$patient->patient_id]);
+                            @endphp
+                            <tr class="hover:bg-slate-50">
+                                <td class="px-4 py-2.5">
+                                    <a href="{{ route('patient.show', $patient->id) }}" class="flex items-center gap-3 font-medium text-slate-900 hover:text-sky-700">
+                                        <span aria-hidden="true" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-semibold text-sky-800">{{ $initials ?: '?' }}</span>
+                                        <span>{{ $name ?: 'Name not recorded' }}</span>
+                                    </a>
+                                </td>
+                                <td class="whitespace-nowrap px-4 py-2.5 font-mono text-xs text-slate-600">{{ $patient->patient_id }}</td>
+                                <td class="whitespace-nowrap px-4 py-2.5">
+                                    {{ $dob ? $dob->format('d-M-Y') : '-' }}
+                                    @if ($chart->age())<span class="text-slate-500">({{ $chart->age() }})</span>@endif
+                                </td>
+                                <td class="px-4 py-2.5">{{ $chart->sex() ?? '-' }}</td>
+                                <td class="whitespace-nowrap px-4 py-2.5">{{ filled($patient->phone) ? $patient->phone : '-' }}</td>
+                                <td class="whitespace-nowrap px-4 py-2.5">{{ $patient->last_exam_at ? \Carbon\Carbon::parse($patient->last_exam_at)->format('d-M-Y') : 'None' }}</td>
+                                <td class="px-4 py-2.5">
+                                    @if ($isCheckedIn)
+                                        <span class="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">Checked in</span>
+                                    @else
+                                        <span class="text-xs text-slate-400">-</span>
+                                    @endif
+                                </td>
+                                <td class="whitespace-nowrap px-4 py-2.5 text-right">
+                                    <div class="flex items-center justify-end gap-3">
+                                        <a href="{{ route('patient.show', $patient->id) }}" class="font-medium text-sky-700 hover:underline">View</a>
+                                        <a href="{{ route('patient.edit', $patient->id) }}" class="text-slate-600 hover:underline">Edit</a>
+                                        @unless ($isCheckedIn)
+                                            <form method="POST" action="{{ route('patient.checkin', $patient->id) }}">
+                                                @csrf
+                                                <button type="submit" class="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50">Check in</button>
+                                            </form>
+                                        @endunless
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <x-clinical.pager :paginator="$patients" noun="patient" />
+        @endif
+    </div>
+
+    <x-slot:scripts>
+        <script>
+            // Filter as you type: fetch the same page with the new filters and swap in its results table.
+            (function () {
+                var form = document.getElementById('records-filters');
+                var timer = null, seq = 0;
+                function apply() {
+                    var url = form.action + '?' + new URLSearchParams(new FormData(form)).toString();
+                    var mine = ++seq;
+                    fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'text/html' } })
+                        .then(function (r) { if (!r.ok) throw new Error('Patient list failed (' + r.status + ')'); return r.text(); })
+                        .then(function (html) {
+                            if (mine !== seq) return;
+                            var doc = new DOMParser().parseFromString(html, 'text/html');
+                            var fresh = doc.getElementById('records-results');
+                            if (!fresh) { window.location = url; return; }
+                            document.getElementById('records-results').replaceWith(fresh);
+                            history.replaceState(null, '', url);
+                        })
+                        .catch(function (err) { if (window.console) console.error(err); window.location = url; });
+                }
+                form.addEventListener('input', function (e) {
+                    clearTimeout(timer);
+                    timer = setTimeout(apply, e.target.type === 'search' ? 250 : 0);
+                });
+                form.addEventListener('submit', function (e) { e.preventDefault(); clearTimeout(timer); apply(); });
+            })();
+        </script>
+    </x-slot:scripts>
+</x-layouts.clinical>

@@ -11,7 +11,11 @@ use App\Notifications\NewPatientNotification;
 class PagesController extends Controller
 {
     public function index() {
-        return view('pages.registerTwo');
+        // Today's registrations, so the front desk can reopen a card it just created.
+        $registeredToday = PatientInfo::whereDate('created_at', today())
+            ->orderByDesc('created_at')->orderByDesc('id')->take(10)->get();
+
+        return view('pages.registerTwo', compact('registeredToday'));
     }
 
     public function store(Request $request)

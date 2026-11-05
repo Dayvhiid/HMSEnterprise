@@ -22,12 +22,20 @@ class LensController extends Controller
         foreach($request->inputs as $key => $value){
             Lens::create($value);
         }
-         return redirect(route('doctors.status'))->with('msg','Lens list updated.'); 
-        // return redirect(route('lens.list'));
+        // Show the list with the new lenses on it, instead of a dead-end status page.
+        return redirect(route('lens.list'))->with('success', 'Lens list updated.');
     }
-    public function list(){
-        $lens = Lens::paginate(9);
-        return view('lens.lenslist', [ 'lens' => $lens]);
+    public function list(Request $request){
+        $query = trim((string) $request->query('query', ''));
+        $lens = Lens::query()
+            ->when($query !== '', fn ($q) => $q->where(fn ($w) => $w
+                ->where('name', 'LIKE', "%{$query}%")
+                ->orWhere('special_code', 'LIKE', "%{$query}%")))
+            ->orderBy('name')->orderBy('id')
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('lens.lenslist', ['lens' => $lens, 'query' => $query]);
     }
     public function edit(Lens $len){
         return view('lens.edit', ['len' => $len]);
@@ -42,9 +50,8 @@ class LensController extends Controller
     return redirect(route('lens.list'));
   }
   public function delete($len){
-    $ln = Lens::find($len);
+    $ln = Lens::findOrFail($len);
     $ln->delete();
-    // return redirect(route('pages.status'))->with('success', 'Lens deleted Sucesfully');
-    return redirect(route('lens.list'));
+    return redirect(route('lens.list'))->with('success', 'Lens "'.$ln->name.'" deleted.');
 }  
 }

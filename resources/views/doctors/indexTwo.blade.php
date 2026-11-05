@@ -41,8 +41,6 @@
                         href=" {{ route('search.vitals') }} ">Search Vitals</a>
                     <a class="text-sm font-medium text-slate-700 hover:text-[#1993e5] transition-colors duration-200"
                         href=" {{ route('calender') }} ">Patient Management</a>
-                     <a class="text-sm font-medium text-slate-700 hover:text-[#1993e5] transition-colors duration-200"
-                        href=" {{ route('images.search') }} ">Case Files</a>   
                     <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-gray-200 shadow-sm"
                         style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDnoRkCLE4bExTFjpCm8IS1EzT7i6pY7T47r832KqIfnz_zq8OBwroxbH5-S1p0VEHOKuzsRqEF1iRrzjJ5Ezv5IBTWz7oZS3XOuKVPNBtcGqx7FNOrpoUSHjombGa3pgm9eTIe_Ph2e6HpWrgAp_-aduzAPFMRFB8nmcHKQNfySdNBODRzj_tnQcbktxOwwzhvbypsBsOM88wnleIOoy-dENzW-ThGjt8H9NyzV59I6otvvr4CP3XNz8Rmh8gNErZijlR6TMRDvHmI");'>
                     </div>

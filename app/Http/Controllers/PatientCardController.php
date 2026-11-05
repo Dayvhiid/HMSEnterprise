@@ -7,6 +7,7 @@ use App\Models\PatientInfo;
 use App\Models\Treat;
 use App\Models\Vital;
 use App\Models\User;
+use App\Support\PatientChart;
 use Illuminate\Http\Request;
 
 class PatientCardController extends Controller
@@ -25,22 +26,17 @@ class PatientCardController extends Controller
     $user = PatientInfo::findOrFail($id);
 
     // Medical records are linked to the patient by patient ID (vitals.patient_code, treats.patient_id).
-    $vitals = Vital::where('patient_code', $user->patient_id);
-    $treatments = Treat::where('patient_id', $user->patient_id);
-    $medicalRecords = [
-        'vitalsCount' => $vitals->count(),
-        'latestVital' => $vitals->max('created_at'),
-        'treatmentsCount' => $treatments->count(),
-        'latestTreatment' => $treatments->max('created_at'),
-    ];
+    $chart = PatientChart::for($user);
+    $medicalRecords = $chart->counts();
 
-    return view('patient_cards', compact('user', 'medicalRecords'));
+    return view('patient_cards', compact('user', 'chart', 'medicalRecords'));
 }
 
     public function edit($id)
 {
     $user = PatientInfo::findOrFail($id);
-    return view('patient_cards_edit', compact('user'));
+    $chart = PatientChart::for($user);
+    return view('patient_cards_edit', compact('user', 'chart'));
 }
 
     public function update(Request $request, $id)
