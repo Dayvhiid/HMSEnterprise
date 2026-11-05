@@ -2,6 +2,16 @@
 
 Record each meaningful decision here. Newest entries go first.
 
+## ADR-005 — Clinic branding comes from configuration
+- Status: Accepted (2026-11-04).
+- Decision: Clinic name, address, phone, product name and SMS sender come from `config/clinic.php` (`CLINIC_*` in `.env`). The neutral defaults are "ClearSight EMR" / "ClearSight Eye Clinic". `/` is a neutral welcome page; the original clinic's marketing pages are kept but not routed.
+- Consequence: Each installation sets its own branding without code changes. Unfinished modules are hidden behind `clinic.features.*` flags.
+
+## ADR-004 — Staff accounts are created by administrators
+- Status: Accepted (2026-11-04).
+- Decision: Public self-registration (`/register`, Fortify registration) is disabled. Admins add staff at `/admin/staff`. Each role (`admin`, `user` = clinician, `reception`, `optician`) has its own home screen after login.
+- Consequence: Only admin-only routes are restricted by role so far. Full per-module permissions and an audit log are Tier 1 work.
+
 ## ADR-001 — Shared data architecture
 - Status: Accepted as a requirement; implementation details pending proof of concept.
 - Context: Multiple computers are on the same local Wi-Fi and must use shared data without public internet.

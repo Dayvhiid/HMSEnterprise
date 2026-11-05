@@ -10,6 +10,7 @@
     <title>DRUG LIST</title>
 </head>
 <body>
+@include('partials.session-bar')
     <div class="container">
         {{-- <nav class="navbar navbar-light bg-light">
             <form class="form-inline">

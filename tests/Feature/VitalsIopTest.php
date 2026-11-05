@@ -22,7 +22,7 @@ test('all four IOP readings are saved and shown on the vitals result page', func
         'odnct' => '14mmHg',
         'oscct' => '552um',
         'osnct' => '16mmHg',
-    ])->assertRedirect(route('doctors.status'));
+    ])->assertRedirect(route('vitals.get', ['query' => '780/05/2026']));
 
     $vital = Vital::where('patient_code', '780/05/2026')->sole();
     expect($vital->odccct)->toBe('541um')

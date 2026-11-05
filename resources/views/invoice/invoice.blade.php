@@ -288,7 +288,9 @@
                         <div class = "invoice-head-bottom-right">
                             <ul class = "text-end">
                                 <li class = 'text-bold'>Pay To:</li>
-                                <li>Ola Oluwa Eye clinic</li>
+                                <li>{{ config('clinic.name') }}</li>
+                                <li>{{ config('clinic.address') }}</li>
+                                <li>{{ config('clinic.phone') }}</li>
                                 {{-- <li>2705 N. Enterprise</li> --}}
                             </ul>
                         </div>

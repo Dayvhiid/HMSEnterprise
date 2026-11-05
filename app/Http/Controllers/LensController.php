@@ -22,7 +22,7 @@ class LensController extends Controller
         foreach($request->inputs as $key => $value){
             Lens::create($value);
         }
-         return redirect(route('doctors.status'))->with('msg','Lenses List Updated Succesfully'); 
+         return redirect(route('doctors.status'))->with('msg','Lens list updated.'); 
         // return redirect(route('lens.list'));
     }
     public function list(){

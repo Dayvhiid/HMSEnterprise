@@ -21,6 +21,7 @@ class TreatmentController extends Controller
             'bifocal' => 'array',
             'specialorder' => 'array',
             'progressive' => 'array',
+            'patient_id' => 'required|string|exists:patient_infos,patient_id',
             // 'dosage' => 'required',
             // 'duration' => 'required',
             // 'tab' => 'required',
@@ -29,12 +30,15 @@ class TreatmentController extends Controller
             // 'sur' => 'required',
             // 'rtc' => 'required',
             // 'remark' => 'required',
+        ], [
+            'patient_id.required' => 'Enter the Patient ID before saving.',
+            'patient_id.exists' => 'No patient has that Patient ID. Check the ID on the patient card.',
         ]);
     
         $treatment = new Treat;
         $treatment->patient_id = $request->input('patient_id');
         $treatment->dosage = $request->input('dosage');
-        $treatment->duration = $request->input('duration');
+        $treatment->duration = (string) $request->input('duration', '');
         $treatment->tab = $request->input('tab');
         $treatment->gutt = $request->input('gutt');
         $treatment->oc = $request->input('oc');
@@ -49,7 +53,9 @@ class TreatmentController extends Controller
         $treatment->invisible = isset($validatedData['invisible']) ? json_encode($validatedData['invisible']) : null;
         $treatment->save();
     
-        return redirect(route('doctors.status'))->with('msg', 'Patient\'s vitals recorded successfully');
+        // Show the patient's treatment history, with the new plan on it.
+        return redirect(route('search.get', ['query' => $treatment->patient_id]))
+            ->with('success', 'Treatment plan and prescription saved.');
     }
     
     

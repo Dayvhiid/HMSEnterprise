@@ -144,7 +144,7 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Features::registration(), // Disabled: staff accounts are created by an administrator.
         Features::resetPasswords(),
         // Features::emailVerification(),
         Features::updateProfileInformation(),

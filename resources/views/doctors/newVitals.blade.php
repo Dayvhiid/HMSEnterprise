@@ -12,6 +12,7 @@
 </head>
 
 <body>
+@include('partials.session-bar', ['showErrors' => false])
 @php
     // $vital and $prefill are only set when editing a saved visit (VitalsController::edit).
     $editing = isset($vital);

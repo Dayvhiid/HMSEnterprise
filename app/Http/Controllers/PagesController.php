@@ -68,7 +68,9 @@ class PagesController extends Controller
 
     // Notification::send($patient_info, new NewPatientNotification($patient_info));
     // Redirect to the status page with a success message
-    return redirect(route('pages.status'))->with('success', 'Patient data saved successfully');
+    // Open the new patient's card so the front desk can carry on from there.
+    return redirect(route('patient.show', $patient_info->id))
+        ->with('success', 'Patient registered (ID '.$patient_info->patient_id.'). The doctors have been notified.');
 
     //notification
     
@@ -90,14 +92,14 @@ class PagesController extends Controller
             'occupation' => 'required',
             'emergency_phone' => 'required'
         ]);
-        $patient = PatientInfo::find($record);
+        $patient = PatientInfo::findOrFail($record);
         $patient->update($data);
-        return redirect(route('pages.status'))->with('success', 'Product Updated Sucesfully');
+        return redirect(route('pages.status'))->with('success', 'Patient details updated.');
     }
 
     public function destroy($record){
-        $patient = PatientInfo::find($record);
+        $patient = PatientInfo::findOrFail($record);
         $patient->delete();
-        return redirect(route('pages.status'))->with('success', 'Product deleted Sucesfully');
+        return redirect(route('pages.status'))->with('success', 'Patient record deleted.');
     }    
 }

@@ -19,7 +19,7 @@ test('low or empty stock never blocks the invoice, and every item is deducted', 
             ['name' => 'Ray Frame (Frame)', 'price' => '30000', 'qty' => '1'],
         ]])
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/invoice');
+        ->assertRedirectContains('/invoice?id=');
 
     expect((float) Invo::sole()->amount)->toBe(66000.0)
         ->and(Drug::sole()->quantity)->toBe(-2)
@@ -35,7 +35,7 @@ test('selling the last item in stock goes through and leaves zero', function () 
         ->post(route('invoice.save'), ['pid' => 'Test Patient', 'discount' => '0', 'inputs' => [
             ['name' => 'Timolol (Drug)', 'price' => '2000', 'qty' => '2'],
         ]])
-        ->assertRedirect('/invoice');
+        ->assertRedirectContains('/invoice?id=');
 
     expect(Invo::count())->toBe(1)->and(Drug::sole()->quantity)->toBe(0);
 });

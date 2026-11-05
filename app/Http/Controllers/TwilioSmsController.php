@@ -40,7 +40,7 @@ class TwilioSmsController extends Controller
     
     foreach ($birthdayUsers as $user) {
         $recieverNumber = $user->phone;
-        $message = "Happy birthday, from all of us at Ola-Oluwa eye clinic! Wishing you a day filled with brightness and clarity, just like your vision.Enjoy your special day !"; // Customize message as needed
+        $message = "Happy birthday, from all of us at ".config('clinic.name')."! Wishing you a day filled with brightness and clarity, just like your vision.Enjoy your special day !"; // Customize message as needed
 
         try {
             $account_sid = getenv("TWILIO_SID");

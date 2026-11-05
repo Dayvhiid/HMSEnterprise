@@ -187,9 +187,10 @@ body{
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>{{ config('clinic.product_name') }}</title>
 </head>
 <body>
+@include('partials.session-bar')
     <form action="{{route('invoice.search', ['users' => $users])}}" type="get">
         
           @foreach($users as $user) 
@@ -227,7 +228,9 @@ body{
                             <div class = "invoice-head-bottom-right">
                                 <ul class = "text-end">
                                     <li class = 'text-bold'>Pay To:</li>
-                                    <li>Ola Oluwa Eye clinic</li>
+                                    <li>{{ config('clinic.name') }}</li>
+                                <li>{{ config('clinic.address') }}</li>
+                                <li>{{ config('clinic.phone') }}</li>
                                     {{-- <li>2705 N. Enterprise</li> --}}
                                 </ul>
                             </div>

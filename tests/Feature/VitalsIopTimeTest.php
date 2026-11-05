@@ -31,7 +31,7 @@ test('the IOP time is saved and shown on the visit card', function () {
         'odnct' => '14mmHg',
         'iop_taken_at' => '2026-11-04T10:15',
         'form_token' => 't1',
-    ])->assertRedirect(route('doctors.status'));
+    ])->assertRedirect(route('vitals.get', ['query' => '612/11/25']));
 
     $vital = Vital::sole();
     expect($vital->iop_taken_at->format('Y-m-d H:i'))->toBe('2026-11-04 10:15');
@@ -43,7 +43,7 @@ test('the IOP time is saved and shown on the visit card', function () {
 
 test('the IOP time is optional and shows a dash when not recorded', function () {
     $this->actingAs($this->user)->post(route('vitals.store'), ['patient_code' => '612/11/25', 'odnct' => '14mmHg', 'form_token' => 't1'])
-        ->assertRedirect(route('doctors.status'));
+        ->assertRedirect(route('vitals.get', ['query' => '612/11/25']));
 
     expect(Vital::sole()->iop_taken_at)->toBeNull();
 

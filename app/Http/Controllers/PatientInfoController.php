@@ -27,7 +27,7 @@ public function update(Request $request, $id)
     ]);
 
     // return redirect()->back()->with('success', 'Patient updated successfully!');
-     return redirect(route('pages.status'))->with('success', 'Patient Info updated succefully');
+     return redirect(route('pages.status'))->with('success', 'Patient details updated.');
 }
 
 

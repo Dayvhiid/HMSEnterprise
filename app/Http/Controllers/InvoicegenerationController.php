@@ -3,35 +3,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Invo;
 use App\Models\PatientInfo;
-use LaravelDaily\Invoices\Invoice;
-use LaravelDaily\Invoices\Classes\Buyer;
-use Illuminate\Support\Facades\View;
-use LaravelDaily\Invoices\Classes\InvoiceItem;
 use Illuminate\Http\Request;
 
 class InvoicegenerationController extends Controller
 {
-    public function index(){
-        // $invo = Invo::latest()->first();
-        // $patient_info = PatientInfo::latest();
-        // $customer = new Buyer([
-        //     'name'          => 'Dada David',
-        //     'custom_fields' => [
-        //         'email' => 'test123@example.com',
-        //     ],
-        // ]);
-        
-        // $item = InvoiceItem::make('Service 10')->pricePerUnit(2);
-        
-        // $invoice = Invoice::make()
-        //     ->buyer($customer)
-        //     ->discountByPercent(10)
-        //     ->taxRate(15)
-        //     ->shipping(1.99)
-        //     ->addItem($item);
-        $invoice = Invo::latest()->first();
-        // return $invoice->stream();
-        // return View::make('vendor.invoices.templates.default', compact('invoice'));
-         return view('invoice.invoiceTwo', compact('invoice'));
+    // Receipt for one invoice (?id=...). Without an id it falls back to the latest invoice, as before.
+    public function index(Request $request){
+        $invoice = $request->filled('id')
+            ? Invo::findOrFail($request->integer('id'))
+            : Invo::latest('id')->first();
+
+        if (! $invoice) {
+            return redirect(route('generate.show'))->with('info', 'No invoices yet. Create one below.');
+        }
+
+        $patient = PatientInfo::where('patient_id', $invoice->pid)->first();
+
+        return view('invoice.invoiceTwo', compact('invoice', 'patient'));
     }
 }

@@ -7,12 +7,13 @@
         href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
         onload="this.rel='stylesheet'" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <title>Doctors Index Page</title>
+    <title>Clinical Dashboard · {{ config('clinic.product_name') }}</title>
     <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 </head>
 
 <body class="bg-white" style='font-family: Lexend, "Noto Sans", sans-serif;'>
+@include('partials.session-bar')
     <div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
         <div class="layout-container flex h-full grow flex-col">
             <header
@@ -27,7 +28,7 @@
                         <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                             stroke-width="2"></path>
                     </svg>
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900">Doctors Index Page</h1>
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-slate-900">Clinical Dashboard</h1>
                 </div>
                 <nav class="flex items-center gap-8">
                     <a class="text-sm font-medium text-slate-700 hover:text-[#1993e5] transition-colors duration-200"
@@ -129,7 +130,8 @@
                                 class="inline-flex items-center gap-2 rounded-md bg-[#1993e5] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#137abd] focus:outline-none focus:ring-2 focus:ring-[#1993e5] focus:ring-offset-2 transition-colors duration-200">
                                     <span class="material-icons text-sm">sms</span> <a href="{{route('sms.page', ['sms' => $appointment])}}">Send Sms</a>
                         </button> --}}
-                        <!-- filepath: c:\laragon\www\authentication\resources\views\doctors\indexTwo.blade.php -->
+                        {{-- Telemedicine is unfinished; it is hidden unless CLINIC_FEATURE_TELEMEDICINE=true. --}}
+@if (config('clinic.features.telemedicine'))
 <button
     id="create-room-btn"
     type="button"
@@ -139,6 +141,7 @@
     <span class="material-icons text-sm">sms</span>
     Telemedicine Module.
 </button>
+@endif
 
                     <h2 class="text-2xl font-bold text-slate-800 mt-8 mb-6">Patient Notifications</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

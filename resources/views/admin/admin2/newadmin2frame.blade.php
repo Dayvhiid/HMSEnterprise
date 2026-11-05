@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
+@include('partials.session-bar')
     <form method="POST" action="{{ route('frame.store') }}">
     @csrf
     @if(session('success'))

@@ -26,7 +26,7 @@ class InventoryController extends Controller
         foreach($request->inputs as $key => $value){
             Inventory::create($value);
         }
-        return redirect(route('pages.status'))->with('success', 'Inventory List updated succefully');
+        return redirect(route('pages.status'))->with('success', 'Stock ledger updated.');
         // return redirect(route('inventory.list'));
        
     }
@@ -34,7 +34,7 @@ class InventoryController extends Controller
         return view('inventory.search');
     }
     public function find(){
-        $search_text = $_GET['query'];
+        $search_text = (string) request()->query('query', '');
         $drugs = Drug::where('name','LIKE', '%'.$search_text.'%')->get();
         return view('inventory.find', compact('drugs'));
         // return view('products.search', compact('products'));

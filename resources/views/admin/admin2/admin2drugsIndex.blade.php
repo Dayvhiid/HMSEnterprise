@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
+@include('partials.session-bar', ['showErrors' => false])
     <form method="POST" action="{{ route('doctors.store') }}">
     @csrf
      @if($errors->any())

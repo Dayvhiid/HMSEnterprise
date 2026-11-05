@@ -79,6 +79,11 @@ button:hover {
     <form action="{{route('booking.store')}}" method="POST">
         @csrf
         @method('POST')
+        @if ($errors->any())
+          <div style="background:#fdecea;color:#b71c1c;padding:10px 14px;border-radius:6px;margin-bottom:12px;">
+            @foreach ($errors->all() as $error)<div>{{ $error }}</div>@endforeach
+          </div>
+        @endif
       <label for="name">Name:</label>
       <input type="text" id="name" name="name" required>
       <label for="date">Date:</label>

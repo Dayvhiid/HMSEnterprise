@@ -19,9 +19,15 @@ class SendSMSController extends Controller
     public function sendSMS(Request $request){
         $phoneNumber = request()->get('number'); 
         $message = request()->get('message');
+
+        // The Infobip SDK is not installed and the key lives in .env; say so instead of crashing.
+        if (! class_exists(Configuration::class) || blank(config('services.infobip.key'))) {
+            return redirect(route('doctors.status'))->with('msg', 'Message not sent: this SMS service is not set up. Use the other SMS option or ask the administrator.')->with('status_type', 'error');
+        }
+
         $configuration = new Configuration(
-            host: 'https://3gllqv.api.infobip.com',
-            apiKey: 'e467bba270ffb47eed5134206d283d48-293f4f28-33ef-4cdc-8bd3-b700b027082d'
+            host: (string) config('services.infobip.host'),
+            apiKey: (string) config('services.infobip.key')
         );
 
         $sendSmsApi = new SmsApi(config: $configuration);
@@ -30,7 +36,7 @@ class SendSMSController extends Controller
             destinations: [
                 new SmsDestination(to: (string) $phoneNumber)
             ],
-            from: 'Ola-Oluwaeye clinic',
+            from: (string) config('clinic.sms_sender'),
             text: (string) $message
         );
     
@@ -38,10 +44,10 @@ class SendSMSController extends Controller
     
         try {
             $smsResponse = $sendSmsApi->sendSmsMessage($request);
-            return redirect(route('doctors.status'))->with('msg','Message Sent to User Succefully'); 
+            return redirect(route('doctors.status'))->with('msg','Message sent to the patient successfully.'); 
         } catch (ApiException $apiException) {
             // return redirect(route('doctors.status'))->with('msg',$apiException->getMessage()); 
-            return redirect(route('doctors.status'))->with('msg','Message Not Delieverd'); 
+            return redirect(route('doctors.status'))->with('msg','Message not delivered. Please try again.')->with('status_type', 'error');
         }
     }
     public function loadPage(Appointment $sms){

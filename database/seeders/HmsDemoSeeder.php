@@ -14,7 +14,8 @@ class HmsDemoSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create();
+        // Nigerian names and places suit the target market.
+        $faker = Faker::create('en_NG');
         $now = Carbon::now();
 
         $patients = [];
@@ -24,20 +25,24 @@ class HmsDemoSeeder extends Seeder
             $fullName = $firstName.' '.$lastName;
             $patientId = sprintf('PT-%s-%04d', $now->format('y'), $i);
             $visitDate = $faker->dateTimeBetween('-90 days', 'now')->format('Y-m-d');
+            // 'date' is the date of birth, so age and DOB agree on cards and printouts.
+            $age = $faker->numberBetween(8, 78);
+            $place = $faker->randomElement([['Lagos', 'Lagos'], ['Ibadan', 'Oyo'], ['Abuja', 'FCT'], ['Port Harcourt', 'Rivers'], ['Enugu', 'Enugu'], ['Abeokuta', 'Ogun'], ['Benin City', 'Edo'], ['Kano', 'Kano']]);
+            $dateOfBirth = $now->copy()->subYears($age)->subDays($faker->numberBetween(0, 364))->format('Y-m-d');
 
             $patients[] = [
                 'patient_id' => $patientId,
                 'fullname' => $fullName,
                 'first_name' => $firstName,
                 'last_name' => $lastName,
-                'date' => $visitDate,
+                'date' => $dateOfBirth,
                 'datee' => $visitDate,
-                'age' => (string) $faker->numberBetween(8, 78),
-                'gender' => $faker->randomElement(['Male', 'Female']),
+                'age' => (string) $age,
+                'gender' => $faker->randomElement(['male', 'female']),
                 'phone' => '080'.(string) $faker->numberBetween(10000000, 99999999),
                 'email' => Str::lower($firstName.'.'.$lastName.$i.'@example.com'),
-                'city' => $faker->city(),
-                'state' => $faker->state(),
+                'city' => $place[0],
+                'state' => $place[1],
                 'street' => $faker->streetAddress(),
                 'occupation' => $faker->jobTitle(),
                 'emergency_fullname' => $faker->name(),
@@ -51,22 +56,22 @@ class HmsDemoSeeder extends Seeder
 
         $this->seedIfEmpty('users', $this->makeUsers($now));
         $this->seedIfEmpty('doctors', [
-            ['name' => 'Dr. Amina Okafor', 'password' => 'doctor123', 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Dr. Tunde Afolabi', 'password' => 'doctor123', 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Dr. Mariam Bello', 'password' => 'doctor123', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Dr. Amina Okafor', 'password' => Hash::make('doctor123'), 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Dr. Tunde Afolabi', 'password' => Hash::make('doctor123'), 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Dr. Mariam Bello', 'password' => Hash::make('doctor123'), 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         $this->seedIfEmpty('registers', [
-            ['name' => 'frontdesk1', 'password' => 'welcome123', 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'frontdesk2', 'password' => 'welcome123', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'frontdesk1', 'password' => Hash::make('welcome123'), 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'frontdesk2', 'password' => Hash::make('welcome123'), 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         $this->seedIfEmpty('adminpasswords', [
-            ['name' => 'superadmin', 'password' => 'admin123', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'superadmin', 'password' => Hash::make('admin123'), 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         $this->seedIfEmpty('adpasswords', [
-            ['name' => 'legacy_admin', 'password' => 'admin123', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'legacy_admin', 'password' => Hash::make('admin123'), 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         $this->seedIfEmpty('patient_infos', $patients);
@@ -139,21 +144,28 @@ class HmsDemoSeeder extends Seeder
         DB::table($table)->insert($normalizedRows);
     }
 
+    // One demo login per role. All share the password in DEMO_PASSWORD (see docs/DEMO_GUIDE.md).
+    public const DEMO_PASSWORD = 'Demo-2026!';
+
     private function makeUsers(Carbon $now): array
     {
-        $users = [
-            ['name' => 'System Admin', 'email' => 'admin@hms.local', 'password' => Hash::make('password'), 'email_verified_at' => $now, 'remember_token' => Str::random(10), 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Front Desk', 'email' => 'reception@hms.local', 'password' => Hash::make('password'), 'email_verified_at' => $now, 'remember_token' => Str::random(10), 'created_at' => $now, 'updated_at' => $now],
-            ['name' => 'Optical Cashier', 'email' => 'cashier@hms.local', 'password' => Hash::make('password'), 'email_verified_at' => $now, 'remember_token' => Str::random(10), 'created_at' => $now, 'updated_at' => $now],
+        $accounts = [
+            ['System Admin', 'admin@clearsight.demo', 'admin'],
+            ['Dr. Amina Okafor', 'doctor@clearsight.demo', 'user'],
+            ['Bisi Adeyemi', 'frontdesk@clearsight.demo', 'reception'],
+            ['Femi Johnson', 'optician@clearsight.demo', 'optician'],
         ];
+        $hasRole = Schema::hasTable('users') && Schema::hasColumn('users', 'role');
 
-        if (Schema::hasTable('users') && Schema::hasColumn('users', 'role')) {
-            $users[0]['role'] = 'admin';
-            $users[1]['role'] = 'user';
-            $users[2]['role'] = 'user';
-        }
+        return array_map(function ($account) use ($now, $hasRole) {
+            [$name, $email, $role] = $account;
+            $row = ['name' => $name, 'email' => $email, 'password' => Hash::make(self::DEMO_PASSWORD), 'email_verified_at' => $now, 'remember_token' => Str::random(10), 'created_at' => $now, 'updated_at' => $now];
+            if ($hasRole) {
+                $row['role'] = $role;
+            }
 
-        return $users;
+            return $row;
+        }, $accounts);
     }
 
     private function makeAppointments(array $patients, $faker, Carbon $now): array
@@ -335,8 +347,9 @@ class HmsDemoSeeder extends Seeder
             foreach ($items as $item) {
                 $subtotal += $item['price'] * $item['qty'];
             }
-            $discount = $faker->randomElement([0, 1000, 1500]);
-            $amount = $subtotal - $discount;
+            // Discount is a percentage of the subtotal, matching InvoiceController::save.
+            $discount = $faker->randomElement([0, 0, 5, 10]);
+            $amount = $subtotal - round($subtotal * $discount / 100, 2);
 
             $invoiceRows[] = [
                 'pid' => $patient['patient_id'],

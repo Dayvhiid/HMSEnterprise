@@ -62,7 +62,7 @@ class OpticianController extends Controller
     }
 
     public function search(){
-        $search_text = $_GET['query'];
+        $search_text = (string) request()->query('query', '');
         $treatments = Opticians::where('card_number', $search_text)
         ->get();        
          return view('optician.listsearch', ['treatments' => $treatments]);

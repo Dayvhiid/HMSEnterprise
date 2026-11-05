@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
+@include('partials.session-bar')
     <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
       <div class="layout-container flex h-full grow flex-col">
         <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf3] px-10 py-3">
@@ -67,7 +68,7 @@
             <h2 class="text-[#0e141b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Overview</h2>
             <div class="flex flex-wrap gap-4 p-4">
               <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 border border-[#d0dbe7]">
-                <p class="text-[#0e141b] text-base font-medium leading-normal"  >Total revenue</p>
+                <p class="text-[#0e141b] text-base font-medium leading-normal"  >Net revenue (after discounts)</p>
                 <p class="text-[#0e141b] tracking-light text-2xl font-bold leading-tight" > ₦{{ number_format($totalRevenue) }} </p>
               </div>
               <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 border border-[#d0dbe7]">
@@ -83,8 +84,8 @@
                 <p class="text-[#0e141b] tracking-light text-2xl font-bold leading-tight">  {{ number_format($totalProductsSold) }}</p>
               </div>
               <div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 border border-[#d0dbe7]">
-                <p class="text-[#0e141b] text-base font-medium leading-normal">Discount Impact Analysis</p>
-                <p class="text-[#0e141b] tracking-light text-2xl font-bold leading-tight"> {{number_format($discountImpact)}}  </p>
+                <p class="text-[#0e141b] text-base font-medium leading-normal">Discounts given</p>
+                <p class="text-[#0e141b] tracking-light text-2xl font-bold leading-tight"> ₦{{ number_format($discountImpact) }} <span class="text-sm font-normal text-[#4e7397]">of ₦{{ number_format($grossSales) }} gross sales</span></p>
               </div>
             </div>
             <h2 class="text-[#0e141b] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Product Insights</h2>

@@ -12,6 +12,12 @@
 </head>
 
 <body>
+@include('partials.session-bar')
+@foreach (['success' => ['#e8f6ee', '#14532d'], 'info' => ['#fff7e0', '#7a4b00']] as $flashKey => [$flashBg, $flashFg])
+    @if (session($flashKey))
+        <div role="status" style="max-width:960px;margin:12px auto;padding:10px 16px;border-radius:8px;background:{{ $flashBg }};color:{{ $flashFg }};font:14px/1.4 system-ui,sans-serif;">{{ session($flashKey) }}</div>
+    @endif
+@endforeach
     <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
         style='font-family: Manrope, "Noto Sans", sans-serif;'>
         <div class="layout-container flex h-full grow flex-col">

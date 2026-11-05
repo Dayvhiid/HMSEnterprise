@@ -36,4 +36,9 @@ return [
         'sender'        => env('NIGERIABULKSMS_SENDER'),
     ],
 
+    'infobip' => [
+        'host' => env('INFOBIP_HOST'),
+        'key' => env('INFOBIP_API_KEY'),
+    ],
+
 ];

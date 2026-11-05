@@ -54,13 +54,14 @@
     </style>
 </head>
 <body>
+@include('partials.session-bar')
     <div class="container">
         {{-- <h2>Image Gallery</h2> --}}
         <div class="image-container">
             @foreach($images as $image)
                 <div class="image-item">
                     <h3>{{ $image->title }}</h3>
-                    <img src="{{ asset('storage/' . $image->path) }}" alt="{{ $image->title }}">
+                    <img src="{{ route('images.file', $image) }}" alt="{{ $image->title }}">
                 </div>
             @endforeach
         </div>

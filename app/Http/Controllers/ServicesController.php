@@ -23,7 +23,7 @@ class ServicesController extends Controller
         foreach($request->inputs as $key => $value){
             Services::create($value);
         }
-         return redirect(route('pages.status'))->with('success', 'Services List updated succefully');
+         return redirect(route('pages.status'))->with('success', 'Services list updated.');
         // return redirect(route('doctors.list'));
     }
 

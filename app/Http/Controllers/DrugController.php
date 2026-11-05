@@ -28,7 +28,7 @@ class DrugController extends Controller
         foreach($request->inputs as $key => $value){
             Drug::create($value);
         }
-         return redirect(route('pages.status'))->with('success', 'Drug List updated succefully');
+         return redirect(route('pages.status'))->with('success', 'Drug list updated.');
         // return redirect(route('doctors.list'));
     }
 
@@ -106,7 +106,7 @@ class DrugController extends Controller
     ]);
 
     // return redirect()->back()->with('success', 'Patient updated successfully!');
-     return redirect(route('pages.status'))->with('success', 'Drug List updated successfully');
+     return redirect(route('pages.status'))->with('success', 'Drug list updated.');
 }
     
 }

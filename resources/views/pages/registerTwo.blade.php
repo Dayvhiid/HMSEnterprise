@@ -12,6 +12,7 @@
 </head>
 
 <body class="bg-white" style='font-family: "Public Sans", "Noto Sans", sans-serif;'>
+@include('partials.session-bar')
     <div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
         <div class="layout-container flex h-full grow flex-col">
 

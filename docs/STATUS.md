@@ -35,6 +35,16 @@ in `DECISIONS.md`.
 None. The desktop client architecture must be proven before implementation.
 
 ## Recent work
+- 2026-11-04: **Tier 0 demo prep implemented** (see `docs/ENTERPRISE_READINESS.md` §4 and
+  `docs/DEMO_GUIDE.md`). Public sign-up off, open routes behind auth/admin, SMS secrets
+  moved to `.env`, private case-file images, role-based landing + top bar with log out,
+  correct revenue maths, real result pages, neutral `ClearSight` branding via
+  `config/clinic.php`, real staff page, printable spectacle Rx and per-invoice receipt,
+  separate `clearsight_demo` database via `.env.demo`. Tests: 181 passed / 8 skipped / 0 failed.
+  **Action needed:** rotate the SMS credentials that were committed in git history.
+- 2026-11-04: Enterprise-readiness / demo-prep assessment written to
+  `docs/ENTERPRISE_READINESS.md` (no code changes). Baseline: 102 passed / 7 skipped /
+  0 failed; 171 routes. Tier 0 (pre-demo) items await approval.
 - 2026-10-23: Phase 0 discovery complete. Guide docs copied into repo. Fixed
   `RoomController` PSR-4 path + route; fixed test DB config (sqlite :memory:);
   unblocked test suite (guarded broken migration, added missing `two_factor_*`

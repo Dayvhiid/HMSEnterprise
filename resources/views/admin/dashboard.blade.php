@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
+@include('partials.session-bar')
     <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: "Public Sans", "Noto Sans", sans-serif;'>
       <div class="layout-container flex h-full grow flex-col">
         <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7eef3] px-10 py-3">
@@ -28,7 +29,7 @@
                 ></path>
               </svg>
             </div>
-            <h2 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em]">Admin Dasboard</h2>
+            <h2 class="text-[#0e161b] text-lg font-bold leading-tight tracking-[-0.015em]">Admin Dashboard</h2>
           </div>
           <div class="flex flex-1 justify-end gap-8">
             <div class="flex items-center gap-9">

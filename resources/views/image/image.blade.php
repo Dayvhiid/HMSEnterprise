@@ -62,6 +62,7 @@
     </style>
 </head>
 <body>
+@include('partials.session-bar')
     <div class="container">
         <form action="{{ route('images.store') }}" method="POST" enctype="multipart/form-data">
             @csrf

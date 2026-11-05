@@ -1,256 +1,86 @@
+{{-- Thermal-printer receipt for one invoice. Totals come from Invo::totals(), the same maths as the reports. --}}
+@php
+    $totals = $invoice->totals();
+    $money = fn ($n) => '₦'.number_format((float) $n, 2);
+@endphp
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Thermal Invoice</title>
-
+    <title>Receipt {{ $invoice->receiptNumber() }} · {{ config('clinic.product_name') }}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body {
-
-            width: 384px;
-            /* approx. 101.6mm at 96 DPI */
-
-            margin: 0 auto;
-
-            font-family: 'Courier New', Courier, monospace;
-
-            font-size: 14px;
-
-            color: #000;
-
-            background: #fff;
-
-        }
-
-
-
-        .receipt {
-
-            padding: 10px;
-
-        }
-
-
-
-        .center {
-
-            text-align: center;
-
-            margin-bottom: 10px;
-
-        }
-
-
-
-        .line {
-
-            border-top: 1px dashed #000;
-
-            margin: 8px 0;
-
-        }
-
-
-
-        table {
-
-            width: 100%;
-
-            border-collapse: collapse;
-
-            font-size: 14px;
-
-        }
-
-
-
-        th,
-        td {
-
-            text-align: left;
-
-            padding: 2px 0;
-
-        }
-
-
-
-        .right {
-
-            text-align: right;
-
-        }
-
-
-
-        .note {
-
-            font-size: 12px;
-
-            margin-top: 10px;
-
-        }
-
-
-
-        .bold {
-
-            font-weight: bold;
-
-        }
-
-        @media print {
-            .invoice-btns {
-                display: none;
-            }
-        }
+        body{margin:0;background:#fff;color:#000;font-family:'Courier New',Courier,monospace;font-size:14px}
+        .receipt{width:384px;margin:0 auto;padding:10px;box-sizing:border-box}
+        .center{text-align:center;margin-bottom:6px}
+        .line{border-top:1px dashed #000;margin:8px 0}
+        table{width:100%;border-collapse:collapse;font-size:14px}
+        th,td{text-align:left;padding:2px 0;vertical-align:top}
+        .right{text-align:right}
+        .bold{font-weight:bold}
+        .note{font-size:12px;margin-top:10px}
+        .invoice-btns{width:384px;margin:12px auto 32px;display:flex;gap:8px;flex-wrap:wrap;font-family:system-ui,sans-serif}
+        .invoice-btns a,.invoice-btns button{flex:1;text-align:center;padding:9px 10px;border-radius:6px;border:0;font:600 14px system-ui,sans-serif;text-decoration:none;cursor:pointer;background:#e1ecf4;color:#0f2a3d}
+        .invoice-btns .primary{background:#0f2a3d;color:#fff}
+        @media print{.invoice-btns{display:none}}
     </style>
-
 </head>
-
 <body>
-
-    <div class="receipt">
-
-        <div class="center bold">OLA OLUWA EYE CLINIC</div>
-
-        <div class="center">Invoice</div>
-
-        <div>Date: @php echo date('Y-m-d H:i:s') @endphp</div>
-
-        <div>Patient: {{ $invoice->pid }}</div>
-
-
-
-        <div class="line"></div>
-
-
-
-        <table>
-
-            <thead>
-
+@include('partials.session-bar', ['showErrors' => false])
+<div class="receipt" id="receipt">
+    <div class="center bold">{{ strtoupper(config('clinic.name')) }}</div>
+    <div class="center">{{ config('clinic.address') }}</div>
+    <div class="center">{{ config('clinic.phone') }}</div>
+    <div class="line"></div>
+    <div class="center bold">RECEIPT {{ $invoice->receiptNumber() }}</div>
+    <div>Date: {{ $invoice->created_at?->format('d M Y, H:i') }}</div>
+    <div>Patient ID: {{ $invoice->pid }}</div>
+    @if ($patient)
+        <div>Patient: {{ trim($patient->first_name.' '.$patient->last_name) ?: $patient->fullname }}</div>
+    @endif
+    <div class="line"></div>
+    <table>
+        <thead>
+            <tr><th>Item</th><th class="right">Rate</th><th class="right">Qty</th><th class="right">Amount</th></tr>
+        </thead>
+        <tbody>
+            @foreach ($invoice->lines() as $line)
                 <tr>
-
-                    <th>Description</th>
-
-                    <th class="right">Rate</th>
-
-                    <th class="right">Qty</th>
-
-                    <th class="right">Amount</th>
-
+                    <td>{{ $line['name'] }}</td>
+                    <td class="right">{{ number_format($line['price'], 2) }}</td>
+                    <td class="right">{{ $line['qty'] }}</td>
+                    <td class="right">{{ number_format($line['subtotal'], 2) }}</td>
                 </tr>
-
-            </thead>
-
-            <tbody>
-
-                <?php $subtotal = 0; ?>
-                @foreach ($invoice->name as $index => $item)
-                    <tr>
-                        <td>{{ $item }}</td>
-                        <td class="right">{{ $invoice->price[$index] }}</td>
-                        <td class="right">{{ $invoice->qty[$index] }}</td>
-                        <td class="right">{{ $invoice->price[$index] * $invoice->qty[$index] }}</td>
-                        <?php $subtotal += $invoice->price[$index] * $invoice->qty[$index]; ?>
-                    </tr>
-                @endforeach
-                <tr>
-                    <td colspan="3" class="right">Subtotal:</td>
-                    <td class="right">{{ $subtotal }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="right">Discount ({{ $invoice->discount }}%):</td>
-                    <?php $discount_amount = $subtotal * ($invoice->discount / 100); ?>
-                    <td class="right">-{{ $discount_amount }}</td>
-                </tr>
-                <tr>
-                    <td colspan="3" class="right">Total:</td>
-                    <?php $discounted_subtotal = $subtotal - $discount_amount; ?>
-                    <td class="right">{{ $discounted_subtotal }}</td>
-                </tr>
-
-
-            </tbody>
-
-        </table>
-
-
-
-        <div class="line"></div>
-
-        <div class="right bold">Sub Total: @php echo $discounted_subtotal @endphp</div>
-
-
-
-        <div class="line"></div>
-
-        <div class="note">NOTE: The price is generated at {{ $invoice->discount }}% discount.</div>
-
-        <div class="line"></div>
-
-    </div>
-    <div class = "invoice-btns">
-        <button type = "button" class = "invoice-btn" onclick="printInvoice()">
-            <span>
-                <i class="fa-solid fa-print"></i>
-            </span>
-            <span>Print</span>
-        </button>
-        {{-- <button type = "button" class = "invoice-btn" onclick="downloadInvoice()">
-                                <span>
-                                    <i class="fa-solid fa-download"></i>
-                                </span>
-                                <span>Download</span>
-                            </button> --}}
-        <button type="button" class="invoice-btn" id="downloadPdfBtn">
-            <span>
-                <i class="fa-solid fa-download"></i>
-            </span>
-            <span>Download as PDF</span>
-        </button>
-    </div>
-
-</body>
+            @endforeach
+        </tbody>
+    </table>
+    <div class="line"></div>
+    <table>
+        <tr><td>Subtotal</td><td class="right">{{ $money($totals['gross']) }}</td></tr>
+        @if ($totals['discount'] > 0)
+            <tr><td>Discount ({{ rtrim(rtrim(number_format($invoice->discountPercent(), 2), '0'), '.') }}%)</td><td class="right">-{{ $money($totals['discount']) }}</td></tr>
+        @endif
+        <tr class="bold"><td>TOTAL</td><td class="right">{{ $money($totals['net']) }}</td></tr>
+    </table>
+    <div class="line"></div>
+    <div class="note center">Thank you for choosing {{ config('clinic.name') }}.</div>
+</div>
+<div class="invoice-btns">
+    <button type="button" class="primary" onclick="window.print()">Print</button>
+    <button type="button" id="downloadPdfBtn">Download PDF</button>
+    <a href="{{ route('generate.show') }}">New invoice</a>
+</div>
 <script>
-    function printInvoice() {
-        window.print();
-    }
-</script>
-<script>
-    document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-        // Select the HTML content to be converted
-        const element = document.documentElement; // Entire page
-
-        // PDF options (customize as needed)
-        const opt = {
-            margin: 10,
-            filename: 'webpage.pdf',
-            image: {
-                type: 'jpeg',
-                quality: 0.98
-            },
-            html2canvas: {
-                scale: 2
-            },
-            jsPDF: {
-                unit: 'mm',
-                format: 'a4',
-                orientation: 'portrait'
-            }
-        };
-
-        // Generate PDF
-        html2pdf().set(opt).from(element).save();
+    document.getElementById('downloadPdfBtn').addEventListener('click', function () {
+        if (typeof html2pdf === 'undefined') { window.print(); return; }
+        html2pdf().set({
+            margin: 5,
+            filename: @json('receipt-'.$invoice->receiptNumber().'.pdf'),
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+        }).from(document.getElementById('receipt')).save();
     });
 </script>
-
-
+</body>
 </html>

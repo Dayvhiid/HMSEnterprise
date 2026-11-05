@@ -32,7 +32,7 @@ test('submitting the same form twice saves the exam only once', function () {
     $form = ['patient_code' => '612/11/25', 'cc' => 'Blurry vision', 'fossph' => '-0.75', 'form_token' => 'token-abc'];
 
     $this->actingAs($this->user)->post(route('vitals.store'), $form)
-        ->assertRedirect(route('doctors.status'));
+        ->assertRedirect(route('vitals.get', ['query' => '612/11/25']));
 
     // Same form again: double click, or Back button then Save.
     $this->actingAs($this->user)->post(route('vitals.store'), $form)
@@ -69,7 +69,7 @@ test('a form without a patient ID is rejected with a message and keeps what was 
     // The token of a rejected form was never used, so fixing the error and saving works.
     $this->actingAs($this->user)
         ->post(route('vitals.store'), ['patient_code' => '700/01/2026', 'cc' => 'Itchy eyes', 'form_token' => 'token-x'])
-        ->assertRedirect(route('doctors.status'));
+        ->assertRedirect(route('vitals.get', ['query' => '700/01/2026']));
     expect(Vital::where('patient_code', '700/01/2026')->count())->toBe(1);
 });
 

@@ -12,6 +12,7 @@
 </head>
 
 <body>
+@include('partials.session-bar', ['showErrors' => false])
     <form method="POST" action="{{ route('services.store') }}">
         @csrf
         @if ($errors->any())

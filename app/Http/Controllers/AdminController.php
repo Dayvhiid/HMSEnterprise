@@ -14,6 +14,10 @@ use App\Models\Inventory;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+use App\Models\User;
 
 class AdminController extends Controller
 {
@@ -140,7 +144,33 @@ public function demographics() {
 }
 
 public function staff(){
-    return view('admin.staff');
+    return view('admin.staff', [
+        'users' => User::orderBy('name')->get(),
+        'roles' => User::ROLE_LABELS,
+    ]);
+}
+
+// Public sign-up is disabled, so administrators create staff accounts here.
+public function storeStaff(Request $request){
+    $data = $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+        'role' => ['required', Rule::in(array_keys(User::ROLE_LABELS))],
+        'password' => ['required', 'confirmed', Password::defaults()],
+    ], [
+        'email.unique' => 'A staff member already uses that email address.',
+    ]);
+
+    $user = new User();
+    $user->forceFill([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'role' => $data['role'],
+        'password' => Hash::make($data['password']),
+        'email_verified_at' => now(),
+    ])->save();
+
+    return redirect(route('admin.staff'))->with('success', $user->name.' was added as '.$user->roleLabel().'.');
 }
 
 
@@ -493,23 +523,25 @@ public function invoiceAnalytics()
 
     $dailyData = []; // For charting
 
-    foreach ($invoices as $invoice) {
-        $names = is_string($invoice->name) ? explode(',', $invoice->name) : $invoice->name;
-        $quantities = is_string($invoice->qty) ? explode(',', $invoice->qty) : $invoice->qty;
-        $prices = is_string($invoice->price) ? explode(',', $invoice->price) : $invoice->price;
+    $grossSales = 0;
 
-        $discount = $invoice->discount ?? 0;
-        $discountImpact += $discount;
+    foreach ($invoices as $invoice) {
+        // Revenue is what patients actually pay: line totals minus the invoice's percentage discount.
+        $totals = $invoice->totals();
+        $discountImpact += $totals['discount'];
+        $grossSales += $totals['gross'];
+        $netShare = 1 - $invoice->discountPercent() / 100;
 
         $invoiceDate = $invoice->created_at->format('Y-m-d');
 
         $dailyQty = 0;
         $dailyRevenue = 0;
 
-        foreach ($names as $index => $productName) {
-            $quantity = (int)($quantities[$index] ?? 0);
-            $price = (float)($prices[$index] ?? 0);
-            $lineTotal = $quantity * $price;
+        foreach ($invoice->lines() as $line) {
+            $productName = $line['name'];
+            $quantity = $line['qty'];
+            // Each line carries its share of the invoice discount, so product revenue adds up to net revenue.
+            $lineTotal = $line['subtotal'] * $netShare;
 
             // Track daily data
             $dailyQty += $quantity;
@@ -565,6 +597,7 @@ public function invoiceAnalytics()
 
     return view('admin.invoiceanalytics', [
         'totalRevenue' => $totalRevenue,
+        'grossSales' => $grossSales,
         'averageInvoiceValue' => $averageInvoiceValue,
         'totalInvoices' => $totalInvoices,
         'totalProductsSold' => $totalProductsSold,

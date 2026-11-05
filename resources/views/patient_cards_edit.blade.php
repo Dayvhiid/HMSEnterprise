@@ -12,13 +12,14 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
+@include('partials.session-bar')
     <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: "Public Sans", "Noto Sans", sans-serif;'>
       <div class="layout-container flex h-full grow flex-col">
         <div class="gap-1 px-6 flex flex-1 justify-center py-5">
           <div class="layout-content-container flex flex-col w-80">
             <div class="flex h-full min-h-[700px] flex-col justify-between bg-slate-50 p-4">
               <div class="flex flex-col gap-4">
-                <h1 class="text-[#0e161b] text-base font-medium leading-normal">MediCare Solutions</h1>
+                <h1 class="text-[#0e161b] text-base font-medium leading-normal">{{ config('clinic.short_name') }}</h1>
                 <div class="flex flex-col gap-2">
                   <div class="flex items-center gap-3 px-3 py-2">
                     <div class="text-[#0e161b]" data-icon="House" data-size="24px" data-weight="regular">

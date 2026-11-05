@@ -3,3 +3,7 @@
 /public/storage
 .env
 /.env
+
+# Per-environment files (e.g. .env.demo) hold secrets too
+.env.*
+!.env.example

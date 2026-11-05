@@ -11,9 +11,10 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-    <title>Document</title>
+    <title>{{ config('clinic.product_name') }}</title>
 </head>
 <body>
+@include('partials.session-bar', ['showErrors' => false])
     <div class="container">
       <div class="flex">
         <div>

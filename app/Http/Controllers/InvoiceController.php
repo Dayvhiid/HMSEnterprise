@@ -72,12 +72,14 @@ class InvoiceController extends Controller
     // Validate the request
                 $validatedData = $request->validate([
                     'inputs' => 'required|array',
-                    'discount' => 'required',
+                    'discount' => 'required|integer|between:0,100',
                     'inputs.*.name' => 'required|string',
                     'inputs.*.price' => 'required|numeric',
                     'inputs.*.qty' => 'required|integer',
                 ], [
                     'inputs.required' => 'Add at least one item to the invoice.',
+                    'discount.between' => 'Discount is a percentage and must be between 0 and 100.',
+                    'discount.integer' => 'Discount must be a whole-number percentage, e.g. 10.',
                     'inputs.*.name.required' => 'Row :position: item name is required.',
                     'inputs.*.price.required' => 'Row :position: price is required. Pick the item from the list so its price fills in.',
                     'inputs.*.price.numeric' => 'Row :position: price must be a number (no commas or currency signs).',
@@ -148,7 +150,8 @@ class InvoiceController extends Controller
         }
     }
 
-    return redirect('/invoice');
+    // Open the receipt for this invoice, not just whichever invoice is newest.
+    return redirect(route('invoice.show', ['id' => $invoice->id]));
 }
     
 //     public function save(Request $request){
@@ -223,7 +226,7 @@ class InvoiceController extends Controller
         return view('invoice.search');
     }
     public function search(){
-        $search_text = $_GET['query'];
+        $search_text = (string) request()->query('query', '');
         $users = Invo::where(function ($query) use ($search_text) {
             $query->where('pid', 'LIKE', "%{$search_text}%");})
         ->get();
@@ -289,34 +292,17 @@ class InvoiceController extends Controller
     $invoices = Invo::where('created_at', '>=', $threeMonthsAgo)->get();
 
     $processedInvoices = $invoices->map(function ($invoice) {
-        // Decode JSON fields
-        $names = json_decode($invoice->name, true);
-        $prices = json_decode($invoice->price, true);
-        $qtys = json_decode($invoice->qty, true);
-        $discount = $invoice->discount ?? 0;
-
-        // Calculate total for this invoice = sum of price * qty for each item
-        $totalBeforeDiscount = 0;
-        for ($i = 0; $i < count($names); $i++) {
-            $totalBeforeDiscount += ($prices[$i] ?? 0) * ($qtys[$i] ?? 0);
-        }
-
-        $totalAfterDiscount = max($totalBeforeDiscount - $discount, 0);
+        // Discount is a percentage of the subtotal; totals() applies it the same way save() does.
+        $totals = $invoice->totals();
 
         return [
             'id' => $invoice->id,
             'pid' => $invoice->pid,
-            'items' => array_map(function ($name, $price, $qty) {
-                return [
-                    'name' => $name,
-                    'price' => $price,
-                    'qty' => $qty,
-                    'subtotal' => $price * $qty,
-                ];
-            }, $names, $prices, $qtys),
-            'discount' => $discount,
-            'total_before_discount' => $totalBeforeDiscount,
-            'total_after_discount' => $totalAfterDiscount,
+            'items' => $invoice->lines(),
+            'discount' => $invoice->discountPercent(),
+            'discount_amount' => $totals['discount'],
+            'total_before_discount' => $totals['gross'],
+            'total_after_discount' => $totals['net'],
             'created_at' => $invoice->created_at,
             'updated_at' => $invoice->updated_at,
         ];

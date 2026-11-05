@@ -20,7 +20,7 @@ test('auto-refraction P.D. is saved and shown on the vitals result page', functi
         'patient_code' => '781/05/2026',
         'arodsph' => '-1.25',
         'arpd' => '62.5',
-    ])->assertRedirect(route('doctors.status'));
+    ])->assertRedirect(route('vitals.get', ['query' => '781/05/2026']));
 
     $vital = Vital::where('patient_code', '781/05/2026')->sole();
     expect($vital->arpd)->toBe('62.5')
@@ -41,7 +41,7 @@ test('vitals can be saved without a P.D.', function () {
 
     $this->actingAs($user)->post(route('vitals.store'), [
         'patient_code' => '782/05/2026',
-    ])->assertRedirect(route('doctors.status'));
+    ])->assertRedirect(route('vitals.get', ['query' => '782/05/2026']));
 
     expect(Vital::where('patient_code', '782/05/2026')->sole()->arpd)->toBeNull();
 });

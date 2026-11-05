@@ -45,12 +45,14 @@ use App\Http\Controllers\TeleMedController;
 
 Route::get('/Bookings', [NewValidationController::class, 'booking'])->name('NewBooking');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+// After login everyone lands on the home screen for their role.
+Route::get('/dashboard', function (Request $request) {
+    return redirect()->route($request->user()->homeRoute());
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Neutral welcome page. The original clinic's marketing pages (landingpage, landing-page2) are kept but not routed.
 Route::get('/', function () {
-    return view('landingpage');
+    return view('welcome-neutral');
 })->name('home');
 
 Route::middleware('auth')->group(function () {
@@ -64,7 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/createpatients/edit', [PagesController::class, 'edit'])->name('pages.edit');
     Route::put('/createpatients/{record}/edit', [PagesController::class, 'update'])->name('pages.update');
     Route::get('/createpatient/status', function(){ return view('pages.status'); })->name('pages.status');
-    Route::delete('/createpatients/{record}/delete',[PagesController::class, 'destroy'])->name('pages.delete');
+    // Deleting a patient is permanent, so only admins can do it.
+    Route::delete('/createpatients/{record}/delete',[PagesController::class, 'destroy'])->middleware('admin')->name('pages.delete');
 
    
     Route::get('/doctors/index', [DoctorsController::class, 'testShow'])->name('doctors.index');
@@ -86,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/doctors/vitals/store', [VitalsController::class, 'store'])->name('vitals.store');
     Route::get('/doctors/vitals/{vital}/edit', [VitalsController::class, 'edit'])->name('vitals.edit');
     Route::put('/doctors/vitals/{vital}', [VitalsController::class, 'update'])->name('vitals.update');
+    Route::get('/doctors/vitals/{vital}/prescription', [VitalsController::class, 'prescription'])->name('vitals.prescription');
     Route::get('/search/treatment', [VitalsController:: class, 'show'])->name('search.treatment'); //Previous Optician Default Page
     Route::get('/search/treatment/get', [VitalsController::class, 'search'])->name('search.get');
     Route::get('/search/vitals', [VitalsController::class, 'display'])->name('search.vitals');
@@ -158,7 +162,8 @@ Route::middleware('auth')->group(function () {
          //Admin Demographics
         Route::get('/admin/demographics', [AdminController::class, 'demographics'])->name('admin.demographics');
         //Admin Staff
-        Route::get('/admin/staff', [AdminController::class, 'staff'])->name('admin.staff'); // Get Back to this later
+        Route::get('/admin/staff', [AdminController::class, 'staff'])->name('admin.staff');
+        Route::post('/admin/staff', [AdminController::class, 'storeStaff'])->name('admin.staff.store');
         //Inventory Analytics
         Route::get('/inventory/analytics', [AdminController::class, 'inventoryAnalytics'])->name('admin.inventory.analytics');
         Route::get('/inventoryTwo/analytics', [AdminController::class, 'inventoryTwoAnalytics'])->name('admin.inventoryTwo.analytics');
@@ -246,45 +251,50 @@ Route::middleware('auth')->group(function () {
     Route::put('/patient-cards/{id}/summary', [PatientCardController::class,'updateSummary'])->name('patient.summary.update');
     Route::get('/patient/pid/{pid}', [PatientCardController::class,'redirectByPid'])->name('patient.bypid')->where('pid', '.*');
     Route::post('/patients/{id}/check-in', [PatientCardController::class,'checkIn'])->name('patient.checkin');
+
+    // Case-file images are served only to signed-in staff, never straight from the public folder.
+    Route::get('/images/{image}/file', [ImageUpload::class, 'file'])->name('images.file');
+
+    // Inventory ledger
+    Route::get('/inventory/store', [InventoryController::class, 'list'])->name('inventory.list');
+    Route::delete('/inventory/{item}/delete', [InventoryController::class, 'delete'])->name('inventory.delete');
+
+    // Video/WebRTC
+    Route::get('/client', function () { return view('video.index'); })->name('video');
+    Route::get('/client/confo/{room}/{type}/{ref}',  [\App\Http\Controllers\EnxRtc\RoomController::class, 'confo']);
+
+    // Testing/Admin Entry
+    Route::get('/admin-entry', function (){ return view('doctors.testing');})->name('testing');
+
+    // Payment
+    Route::get('payment-index', [PaymentController::class, 'index'])->name('payment');
+
+    // Bulk imports and test tools: admins only.
+    Route::middleware('admin')->group(function () {
+        Route::get('/lensesImport', [LensImportController::class, 'index'])->name('lenses.import.index');
+        Route::post('/lenses/import', [LensImportController::class, 'import'])->name('lenses.import');
+
+        Route::post('/import-users', function (Request $request) {
+            $request->validate(['file' => 'required|file|mimes:xlsx,xls,csv']);
+            Excel::import(new UsersImport, $request->file('file'));
+            return 'Users Imported Successfully';
+        })->name('excel.import');
+
+        // SMS (Twilio)
+        Route::get('/sendsms', [TwilioSmsController::class, 'test'])->name('sms');
+
+        // New Validation/Signup
+        Route::get('/signup', [NewValidationController::class, 'signup'])->name('NewSignUp');
+        Route::get('/doctors/signup/imp', [NewDoctorVerificationController::class, 'index'])->name('doctorSignIn');
+    });
 }); //Closing Block
 
-Route::get('/lensesImport', [LensImportController::class, 'index'])->name('lenses.import.index');
-Route::post('/lenses/import', [LensImportController::class, 'import'])->name('lenses.import');
-
-
-  Route::post('/import-users', function (Request $request) {
-    Excel::import(new UsersImport, $request->file('file'));
-    return 'Users Imported Successfully';
-})->name('excel.import');
-
-
-// Inventory Routes
-Route::get('/inventory/store', [InventoryController::class, 'list'])->name('inventory.list');
-Route::delete('/inventory/{item}/delete', [InventoryController::class, 'delete'])->name('inventory.delete');
-
-// Booking/Messaging
+// Public appointment booking from the website. Throttled so the form can't be flooded.
 Route::get('/booking', [MessagingController::class, 'index'])->name('booking');
-Route::post('/booking/status', [MessagingController::class, 'store'])->name('booking.store');
-
-// SMS (Twilio)
-Route::get('/sendsms', [TwilioSmsController::class, 'test'])->name('sms');
-
-// New Validation/Signup
-Route::get('/signup', [NewValidationController::class, 'signup'])->name('NewSignUp');
-Route::get('/doctors/signup/imp', [NewDoctorVerificationController::class, 'index'])->name('doctorSignIn');
-
-// Video/WebRTC
-Route::get('/client', function () { return view('video.index'); })->name('video');
-Route::get('/client/confo/{room}/{type}/{ref}',  [\App\Http\Controllers\EnxRtc\RoomController::class, 'confo']);
-
-// Testing/Admin Entry
-Route::get('/admin-entry', function (){ return view('doctors.testing');})->name('testing');
-
-// Payment
-Route::get('payment-index', [PaymentController::class, 'index'])->name('payment');
+Route::post('/booking/status', [MessagingController::class, 'store'])->middleware('throttle:10,1')->name('booking.store');
 
 // Landing Page
-Route::get('/landing-page', function () {return view('landing-page2');} );
+Route::redirect('/landing-page', '/');
 
 
    

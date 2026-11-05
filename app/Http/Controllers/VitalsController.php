@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PatientInfo;
 use App\Models\Treat;
 use Illuminate\Http\Request;
 use App\Models\Vital;
@@ -159,9 +160,29 @@ class VitalsController extends Controller
     }
 
     // Optionally, you can return a response or redirect
-    return redirect(route('doctors.status'))->with('msg','Patients Vitals Stored successfully');
+    // Show the patient's visits, with the new exam at the top.
+    return redirect($this->vitalsPageUrl($data['patient_code']))->with('success', 'Exam saved.');
 }
 
+    // Printable spectacle prescription (Final RX) for one visit, on the clinic letterhead.
+    public function prescription(Vital $vital)
+{
+    $vital2 = $vital->pairedVital2();
+    $patient = PatientInfo::where('patient_id', $vital->patient_code)->first();
+
+    $eye = fn (?\Illuminate\Database\Eloquent\Model $row, string $prefix) => [
+        'sph' => $row?->getAttribute($prefix.'sph'),
+        'cyl' => $row?->getAttribute($prefix.'cyl'),
+        'axis' => $row?->getAttribute($prefix.'axis'),
+        'va' => $row?->getAttribute($prefix.'va'),
+        'add' => $row?->getAttribute($prefix.'add'),
+        'nva' => $row?->getAttribute($prefix.'nva'),
+    ];
+    $rx = ['OD (Right)' => $eye($vital, 'fod'), 'OS (Left)' => $eye($vital2, 'fos')];
+    $hasRx = collect($rx)->flatten()->filter(fn ($v) => filled($v))->isNotEmpty();
+
+    return view('doctors.spectacle-rx', compact('vital', 'patient', 'rx', 'hasRx'));
+}
     public function edit(Vital $vital)
 {
     $vital2 = $vital->pairedVital2();
@@ -215,7 +236,7 @@ class VitalsController extends Controller
         return view('doctors.searchtreatment');
     }
     public function search(){
-        $search_text = $_GET['query'];
+        $search_text = (string) request()->query('query', '');
         $treatments = Treat::where('patient_id', $search_text)
         ->get();
 
@@ -232,7 +253,7 @@ class VitalsController extends Controller
         return view('doctors.searchvitals');
     }
     // public function vitals(){
-    //     $search_text = $_GET['query'];
+    //     $search_text = (string) request()->query('query', '');
     //     $users = Vital::where('patient_code', $search_text)
     //     ->get(); 
     //     $usersone = vital2::where('patient_code', $search_text)
@@ -243,7 +264,7 @@ class VitalsController extends Controller
 
     // }
     public function vitals() {
-        $search_text = $_GET['query'];
+        $search_text = (string) request()->query('query', '');
 
         // One entry per visit, newest first, each with its own left-eye (vital2) row.
         $visits = Vital::where('patient_code', $search_text)->orderByDesc('created_at')->orderByDesc('id')->get()
@@ -254,7 +275,7 @@ class VitalsController extends Controller
     }
 
     // public function vitals() {
-    //     $search_text = $_GET['query'];
+    //     $search_text = (string) request()->query('query', '');
     
     //     $vitals1 = Vital::where('patient_code', $search_text)->get();
     //     $vitals2 = vital2::where('patient_code', $search_text)->get();

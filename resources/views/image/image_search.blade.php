@@ -57,6 +57,7 @@
     </style>
 </head>
 <body>
+@include('partials.session-bar')
     <div class="container">
         @if(session('error'))
             <p class="error">{{ session('error') }}</p>

@@ -22,7 +22,7 @@ class FrameController extends Controller
         foreach($request->inputs as $key => $value){
             Frame::create($value);
         }
-        return redirect(route('doctors.status'))->with('msg','Frame List Updated Succesfully'); 
+        return redirect(route('doctors.status'))->with('msg','Frame list updated.'); 
         // return redirect(route('frame.list'));
     }
 

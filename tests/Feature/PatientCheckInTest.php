@@ -109,7 +109,7 @@ test('new patient registration records who registered the patient', function () 
         'erel' => 'Sister',
         'epn' => '08000000003',
         'ee' => 'uche@example.com',
-    ])->assertRedirect(route('pages.status'));
+    ])->assertRedirect(route('patient.show', PatientInfo::where('patient_id', '555/07/2026')->value('id')));
 
     expect(PatientInfo::where('patient_id', '555/07/2026')->exists())->toBeTrue();
     $notification = Notification::sole();

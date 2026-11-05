@@ -15,7 +15,7 @@ test('an invoice with more than five items is saved with every item', function (
         ->from(route('generate.show'))
         ->post(route('invoice.save'), ['pid' => 'Test Patient', 'discount' => '0', 'inputs' => $inputs])
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/invoice');
+        ->assertRedirectContains('/invoice?id=');
 
     $invoice = Invo::sole();
     expect($invoice->name)->toHaveCount($count)
@@ -34,7 +34,7 @@ test('a completely empty extra row does not block the invoice', function () {
     $this->actingAs($user)
         ->post(route('invoice.save'), ['pid' => 'Test Patient', 'discount' => '10', 'inputs' => $inputs])
         ->assertSessionHasNoErrors()
-        ->assertRedirect('/invoice');
+        ->assertRedirectContains('/invoice?id=');
 
     $invoice = Invo::sole();
     expect($invoice->name)->toHaveCount(6)

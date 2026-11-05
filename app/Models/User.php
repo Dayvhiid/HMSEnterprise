@@ -50,6 +50,37 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    // Where each role lands after login, and how the role is shown on screen.
+    // 'user' is the original clinician role; 'reception' and 'optician' only change the landing page for now.
+    public const ROLE_HOMES = [
+        'admin' => 'admin.dashboard',
+        'reception' => 'pages.register',
+        'optician' => 'optician.index',
+        'user' => 'doctors.index',
+    ];
+
+    public const ROLE_LABELS = [
+        'admin' => 'Administrator',
+        'reception' => 'Front Desk',
+        'optician' => 'Optician',
+        'user' => 'Clinician',
+    ];
+
+    public function homeRoute(): string
+    {
+        return self::ROLE_HOMES[$this->role] ?? self::ROLE_HOMES['user'];
+    }
+
+    public function roleLabel(): string
+    {
+        return self::ROLE_LABELS[$this->role] ?? self::ROLE_LABELS['user'];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     /**
      * Get the attributes that should be cast.
      *

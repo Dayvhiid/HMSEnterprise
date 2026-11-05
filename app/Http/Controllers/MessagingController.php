@@ -11,6 +11,17 @@ class MessagingController extends Controller
         return view('appointment.bookappointment');
     }
     public function store(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'date' => 'required|date|after_or_equal:today',
+            'time' => 'required|date_format:H:i,H:i:s',
+            'complaints' => 'required|string|max:2000',
+            'phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9 ]{7,20}$/'],
+        ], [
+            'date.after_or_equal' => 'Please choose today or a future date.',
+            'phone.regex' => 'Enter a valid phone number, e.g. 08012345678.',
+        ]);
+
         $appointment = new Appointment();
         // $data = $request->validate([
         //     'name' => 'required',
@@ -38,6 +49,6 @@ class MessagingController extends Controller
             }
 
         $appointment->save();
-        return redirect(route('pages.status'))->with('success', 'Data captured we will get in touch with you soon ');
+        return redirect(route('pages.status'))->with('success', 'Thank you. Your appointment request has been received and we will call you to confirm.');
     }
 }

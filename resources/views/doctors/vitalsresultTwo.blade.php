@@ -14,6 +14,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   </head>
   <body>
+@include('partials.session-bar', ['showErrors' => false])
 
     <div class="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
       <div class="layout-container flex h-full grow flex-col">
@@ -123,6 +124,7 @@
                   @endif
                 </div>
                 <div class="flex items-center gap-3">
+                  <a href="{{ route('vitals.prescription', $combinedResult) }}" target="_blank" class="text-sm text-[#1993e5] underline">Print spectacle Rx</a>
                   <a href="{{ route('vitals.edit', $combinedResult) }}" class="text-sm text-[#1993e5] underline">Open in full form</a>
                   <button type="submit" class="vitals-card-save flex items-center justify-center rounded-lg h-10 px-4 bg-[#1993e5] text-slate-50 text-sm font-bold"><span>Save changes to this visit</span></button>
                 </div>
